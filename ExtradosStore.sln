@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtradosStore.Data", "ExtradosStore.Data\ExtradosStore.Data.csproj", "{67629C27-706F-4688-8F52-5465CC9A3602}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtradosStore.Services", "ExtradosStore.Services\ExtradosStore.Services.csproj", "{063688B0-CBD9-4486-841A-07D2763EE2A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtradosStore.Configuration", "ExtradosStore.Configuration\ExtradosStore.Configuration.csproj", "{45541BDA-9EE0-4FAF-8C25-CCB5E9ACBB06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtradosStore.Common", "ExtradosStore.Common\ExtradosStore.Common.csproj", "{C76B7550-4AC1-43AD-85EC-12118B5CE48E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtradosStore.Entities", "ExtradosStore.Entities\ExtradosStore.Entities.csproj", "{5559EEA3-8C08-48F2-BA14-17DC6F5792A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtradosStore.API", "ExtradosStore.API\ExtradosStore.API.csproj", "{4E1D85B1-98D7-4DAB-A6F2-D064A4BEA519}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67629C27-706F-4688-8F52-5465CC9A3602}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67629C27-706F-4688-8F52-5465CC9A3602}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67629C27-706F-4688-8F52-5465CC9A3602}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67629C27-706F-4688-8F52-5465CC9A3602}.Release|Any CPU.Build.0 = Release|Any CPU
+		{063688B0-CBD9-4486-841A-07D2763EE2A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{063688B0-CBD9-4486-841A-07D2763EE2A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{063688B0-CBD9-4486-841A-07D2763EE2A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{063688B0-CBD9-4486-841A-07D2763EE2A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45541BDA-9EE0-4FAF-8C25-CCB5E9ACBB06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45541BDA-9EE0-4FAF-8C25-CCB5E9ACBB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45541BDA-9EE0-4FAF-8C25-CCB5E9ACBB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45541BDA-9EE0-4FAF-8C25-CCB5E9ACBB06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C76B7550-4AC1-43AD-85EC-12118B5CE48E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C76B7550-4AC1-43AD-85EC-12118B5CE48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C76B7550-4AC1-43AD-85EC-12118B5CE48E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C76B7550-4AC1-43AD-85EC-12118B5CE48E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5559EEA3-8C08-48F2-BA14-17DC6F5792A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5559EEA3-8C08-48F2-BA14-17DC6F5792A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5559EEA3-8C08-48F2-BA14-17DC6F5792A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5559EEA3-8C08-48F2-BA14-17DC6F5792A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E1D85B1-98D7-4DAB-A6F2-D064A4BEA519}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E1D85B1-98D7-4DAB-A6F2-D064A4BEA519}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E1D85B1-98D7-4DAB-A6F2-D064A4BEA519}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E1D85B1-98D7-4DAB-A6F2-D064A4BEA519}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {95AD1367-4BAF-492E-A773-0E28B9416E6C}
+	EndGlobalSection
+EndGlobal
