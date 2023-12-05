@@ -32,7 +32,24 @@ namespace ExtradosStore.API.Controllers
             }
             catch (Exception Ex)
             {
-                Console.WriteLine($"Error in controller  {Ex.Message}");
+                Console.WriteLine($"Error{Ex.Message}");
+                Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
+                return StatusCode(500, "server error:");
+            }
+        }
+
+        [HttpGet("getroles")]
+
+        public async Task<IActionResult> GetRoles()
+        {
+            try
+            {
+                var rolesDB = await _roleService.GetRolesService();
+                return Ok(rolesDB);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error:{Ex.Message}");
                 Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
                 return StatusCode(500, "server error:");
             }

@@ -13,6 +13,8 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlInsertRole = "INSERT INTO [role] (role_name, role_description ) VALUES (@Name, @Description)";
 
+        private string _sqlSelectAllRoles = "SELECT role_name, role_description FROM [role]";
+
         private string _sqlSelectAllNamesRole = "SELECT role_name FROM [role] where role_name = @Name";
 
         public RoleDAO(IOptions<SQLServerConfig> bdConfig)
@@ -27,13 +29,13 @@ namespace ExtradosStore.Data.DAOs.Implementations
             {
                 using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
                 {
-                    var parameters = new { Name = roleRequest.name_role, Description = roleRequest.description_role };
+                    var parameters = new { Name = roleRequest.role_name, Description = roleRequest.role_description };
                     var queryInsert = await connection.ExecuteAsync(_sqlInsertRole, parameters);
 
                     return new CreateRoleDTO
                     {
-                        name_role = roleRequest.name_role,
-                        description_role = roleRequest.description_role
+                        role_name = roleRequest.role_name,
+                        role_description = roleRequest.role_description
                     };
 
                 }
@@ -44,6 +46,27 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 throw;
             }
         }
+
+
+        //devuelve todos los roles de la base de datos
+        public async Task<List<CreateRoleDTO>> DataGetRoles()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    return (await connection.QueryAsync<CreateRoleDTO>(_sqlSelectAllRoles)).ToList();
+
+                }
+
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+
         //comprobar si el nombre del rol esta en uso, devuelve null si el nombre no esta en uso
         public async Task<string> DataCompareNameRole(string nameRole)
         {

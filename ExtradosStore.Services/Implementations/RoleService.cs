@@ -18,13 +18,13 @@ namespace ExtradosStore.Services.Implementations
             try
             {
 
-                var roleAlreadyExists = await _roleDAO.DataCompareNameRole(roleRequest.name_role);
+                var roleAlreadyExists = await _roleDAO.DataCompareNameRole(roleRequest.role_name);
 
                 if (roleAlreadyExists != null) throw new DuplicateNameException("The name role is already in use");
 
                 await _roleDAO.DataCreateRole(roleRequest);
 
-                return new CreateRoleDTO { name_role = roleRequest.name_role, description_role = roleRequest.description_role };
+                return new CreateRoleDTO { role_name = roleRequest.role_name, role_description = roleRequest.role_description };
             }
             catch
             {
@@ -33,6 +33,20 @@ namespace ExtradosStore.Services.Implementations
             }
 
 
+        }
+        public async Task<List<CreateRoleDTO>> GetRolesService()
+        {
+            try
+            {
+                var rolesDB = await _roleDAO.DataGetRoles();
+                return rolesDB;
+
+            }
+            catch
+            {
+
+                throw;
+            }
         }
     }
 }

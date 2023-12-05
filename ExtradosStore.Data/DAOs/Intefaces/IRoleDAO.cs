@@ -6,5 +6,7 @@ namespace ExtradosStore.Data.DAOs.Intefaces
     {
         Task<string> DataCompareNameRole(string nameRole);
         Task<CreateRoleDTO> DataCreateRole(CreateRoleDTO roleRequest);
+        Task<List<CreateRoleDTO>> DataGetRoles();
+
     }
 }
