@@ -1,12 +1,20 @@
+using ExtradosStore.Configuration.DBConfiguration;
+using ExtradosStore.Data.DAOs.Implementations;
+using ExtradosStore.Data.DAOs.Intefaces;
+using ExtradosStore.Services.Implementations;
+using ExtradosStore.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//******************* start dependecies and options *********************
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddScoped<IRoleDAO, RoleDAO>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.Configure<SQLServerConfig>(builder.Configuration.GetSection("DBTestConnection"));
+//******************* end dependecies and options **********************
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

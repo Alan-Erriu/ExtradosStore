@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\ExtradosStore.Configuration\ExtradosStore.Configuration.csproj" />
+    <ProjectReference Include="..\ExtradosStore.Data\ExtradosStore.Data.csproj" />
+    <ProjectReference Include="..\ExtradosStore.Services\ExtradosStore.Services.csproj" />
   </ItemGroup>
 
 </Project>

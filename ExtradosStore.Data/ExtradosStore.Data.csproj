@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DAOs\" />
+    <PackageReference Include="Dapper" Version="2.1.24" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ExtradosStore.Configuration\ExtradosStore.Configuration.csproj" />
+    <ProjectReference Include="..\ExtradosStore.Entities\ExtradosStore.Entities.csproj" />
   </ItemGroup>
 
 </Project>
