@@ -6,5 +6,7 @@ namespace ExtradosStore.Data.DAOs.Interfaces
     {
         Task<string> DataGetEmailUser(string email);
         Task<int> DataSignUp(User newUser);
+        Task<string> DataGetPhoneNumberUser(string phoneNumberRequest);
+
     }
 }

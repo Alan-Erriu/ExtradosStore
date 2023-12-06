@@ -25,15 +25,18 @@ namespace ExtradosStore.API.Controllers
 
             try
             {
-
                 var user = await _authService.SignUpService(createUserRequest);
 
                 return Ok("Succes");
             }
+            catch (PhoneNumberAlreadyExistsException ex)
+            {
+                return Conflict(ex.Message);
+            }
             catch (KeyNotFoundException ex)
             {
                 Console.WriteLine(ex.Message);
-                return Conflict("user role not found");
+                return NotFound("user role not found");
             }
             catch (EmailAlreadyExistsException ex)
             {
@@ -41,7 +44,7 @@ namespace ExtradosStore.API.Controllers
             }
             catch (Exception Ex)
             {
-                Console.WriteLine($"Error creating a new user {Ex.Message} {Ex.StackTrace}");
+                Console.WriteLine($"Error register a new user {Ex.Message} {Ex.StackTrace}");
 
                 return StatusCode(500, "server error:");
             }

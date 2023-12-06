@@ -27,10 +27,14 @@ namespace ExtradosStore.Services.Implementations
             {
 
 
-                var emailInDatabase = (await _atuthDAO.DataGetEmailUser(createUserRequest.user_email))?.ToLower();
+                var emailInDB = (await _atuthDAO.DataGetEmailUser(createUserRequest.user_email))?.ToLower();
                 var emailInRequest = createUserRequest.user_email.ToLower();
 
-                if (emailInDatabase != null && emailInDatabase == emailInRequest) throw new EmailAlreadyExistsException();
+                if (emailInDB != null && emailInDB == emailInRequest) throw new EmailAlreadyExistsException();
+
+                var phoneNumberInDB = (await _atuthDAO.DataGetPhoneNumberUser(createUserRequest.user_phone_number));
+
+                if (phoneNumberInDB != null && phoneNumberInDB == createUserRequest.user_phone_number) throw new PhoneNumberAlreadyExistsException();
 
                 createUserRequest.user_password_hash = _hasherService.HashPasswordUser(createUserRequest.user_password_hash);
 
@@ -51,7 +55,9 @@ namespace ExtradosStore.Services.Implementations
                     user_password_hash = createUserRequest.user_password_hash,
                     user_roleid = userIdRole,
                     user_created_at = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    date_of_birth = dateOfBirthNewUserEpoch,
+                    user_date_of_birth = dateOfBirthNewUserEpoch,
+                    user_phone_number = createUserRequest.user_phone_number,
+
                 };
                 return await _atuthDAO.DataSignUp(Newuser);
 

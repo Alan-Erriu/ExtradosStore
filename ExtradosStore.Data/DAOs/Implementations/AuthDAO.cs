@@ -11,12 +11,13 @@ namespace ExtradosStore.Data.DAOs.Implementations
     {
         private SQLServerConfig _SQLServerConfig;
 
-        private string _sqlInsertUser = @"INSERT INTO [user] (user_name, user_lastname, user_email,user_password_hash, user_created_at, user_date_of_birth, user_roleid)
-                                         VALUES (@Name, @LastName, @Email,@Password, @CreatedAt, @DateOfbirth, @Roleid)";
+        private string _sqlInsertUser = @"INSERT INTO [user] (user_name, user_lastname, user_email,user_password_hash, user_created_at, user_date_of_birth, user_roleid, user_phone_number)
+                                         VALUES (@Name, @LastName, @Email,@Password, @CreatedAt, @DateOfbirth, @Roleid, @PhoneNumber)";
 
 
         private string _sqlSelectEmailUser = "SELECT user_email FROM[user] where user_email = @Email";
 
+        private string _sqlSelectPhoneNumberUser = "SELECT user_phone_number FROM [user] WHERE user_phone_number = @PhoneNumber";
         public AuthDAO(IOptions<SQLServerConfig> bdConfig)
         {
             _SQLServerConfig = bdConfig.Value;
@@ -33,13 +34,14 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
                     var parameters = new
                     {
-                        Name = newUser.user_name,
-                        LastName = newUser.user_lastname,
+                        Name = newUser.user_name.ToLower(),
+                        LastName = newUser.user_lastname.ToLower(),
                         Email = newUser.user_email,
                         Password = newUser.user_password_hash,
-                        DateOfbirth = newUser.date_of_birth,
+                        DateOfbirth = newUser.user_date_of_birth,
                         CreatedAt = newUser.user_created_at,
-                        Roleid = newUser.user_roleid
+                        Roleid = newUser.user_roleid,
+                        PhoneNumber = newUser.user_phone_number
                     };
                     var rowsAffected = await connection.ExecuteAsync(_sqlInsertUser, parameters);
 
@@ -74,6 +76,27 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 throw;
             }
 
+        }
+        public async Task<string> DataGetPhoneNumberUser(string PohoneNumberRequest)
+        {
+
+            try
+            {
+
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { PhoneNumber = PohoneNumberRequest };
+                    var phoneNumberFound = await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectPhoneNumberUser, parameters);
+                    return phoneNumberFound;
+
+                }
+
+            }
+            catch
+            {
+
+                throw;
+            }
         }
     }
 }
