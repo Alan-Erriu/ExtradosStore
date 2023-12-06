@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ExtradosStore.Common\ExtradosStore.Common.csproj" />
     <ProjectReference Include="..\ExtradosStore.Configuration\ExtradosStore.Configuration.csproj" />
     <ProjectReference Include="..\ExtradosStore.Entities\ExtradosStore.Entities.csproj" />
   </ItemGroup>

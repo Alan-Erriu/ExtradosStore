@@ -1,4 +1,5 @@
 ﻿using ExtradosStore.Entities.DTOs.RoleDTOs;
+using ExtradosStore.Entities.Models;
 
 namespace ExtradosStore.Services.Interfaces
 {
@@ -6,7 +7,7 @@ namespace ExtradosStore.Services.Interfaces
     {
         Task<CreateRoleDTO> CreateRoleService(CreateRoleDTO roleRequest);
 
-        Task<List<CreateRoleDTO>> GetRolesService();
+        Task<List<Role>> GetRolesService();
 
     }
 }

@@ -1,7 +1,8 @@
 ﻿using Dapper;
 using ExtradosStore.Configuration.DBConfiguration;
-using ExtradosStore.Data.DAOs.Intefaces;
+using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.DTOs.RoleDTOs;
+using ExtradosStore.Entities.Models;
 using Microsoft.Extensions.Options;
 using System.Data.SqlClient;
 
@@ -13,7 +14,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlInsertRole = "INSERT INTO [role] (role_name, role_description ) VALUES (@Name, @Description)";
 
-        private string _sqlSelectAllRoles = "SELECT role_name, role_description FROM [role]";
+        private string _sqlSelectAllRoles = "SELECT role_id,role_name, role_description FROM [role]";
 
         private string _sqlSelectAllNamesRole = "SELECT role_name FROM [role] where role_name = @Name";
 
@@ -49,13 +50,13 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
 
         //devuelve todos los roles de la base de datos
-        public async Task<List<CreateRoleDTO>> DataGetRoles()
+        public async Task<List<Role>> DataGetRoles()
         {
             try
             {
                 using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
                 {
-                    return (await connection.QueryAsync<CreateRoleDTO>(_sqlSelectAllRoles)).ToList();
+                    return (await connection.QueryAsync<Role>(_sqlSelectAllRoles)).ToList();
 
                 }
 

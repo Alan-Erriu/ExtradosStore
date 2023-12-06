@@ -1,5 +1,6 @@
-﻿using ExtradosStore.Data.DAOs.Intefaces;
+﻿using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.DTOs.RoleDTOs;
+using ExtradosStore.Entities.Models;
 using ExtradosStore.Services.Interfaces;
 using System.Data;
 
@@ -34,7 +35,7 @@ namespace ExtradosStore.Services.Implementations
 
 
         }
-        public async Task<List<CreateRoleDTO>> GetRolesService()
+        public async Task<List<Role>> GetRolesService()
         {
             try
             {
