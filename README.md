@@ -4,7 +4,7 @@
 
 <hr/>
 
-## Introducción
+## Introducciï¿½n
 
 **Extrados Store** es una API De ecommerce donde los usuarios pueden registrarse, vender sus productos o comprar productos publicados por otros usuarios.
 
@@ -46,16 +46,18 @@ En este modelo solo extisten dos roles: "user" "admin"
 
 ## Endpoints
 
-#### 1. Acciones de usuario (con rol user)
+#### Acciones de usuario (con rol user)
 
- #### 2.  Crear un usuario/registrase
+
+
+#### 1 Crear un usuario/registrase
 
    ##### `POST /api/Auth/signup`
 
 En el body de la request:
 
 ```json
-{
+
 {
   "user_name": "Lucas Ezquiel",
   "user_lastname": "Erriu",
@@ -64,7 +66,18 @@ En el body de la request:
   "user_date_of_birth": "1989-07-16T00:00:00.093Z",
   "user_phone_number":"+541167659472"
 }
-}
+
 ````
 
-Si los datos del cuerpo de la request están correctos, se creará el usuario en la base de datos con un id aunto incrementado y rol_id 1 (user) fk con role_id.
+##### Respuestas
+
+|   Caso    | Status |             Respuesta                    |
+| :-------: | :----: | :--------------------------------:       |
+|   Exito   |  200   |          { "succes" }                    |
+| Not Found |  404   |     { "*user* role not found" }          |
+| Conflict  |  409   | { "The phone number is already in use" } |
+| Conflict  |  409   |      { "The email is already in use" }   |
+|   Fallo   |  500   |          { "Server error" }              |
+
+
+Si los datos del cuerpo de la request estan correctos, se creara el usuario en la base de datos con un id auto incrementado y rol_id 1 (user) fk con role_id.
