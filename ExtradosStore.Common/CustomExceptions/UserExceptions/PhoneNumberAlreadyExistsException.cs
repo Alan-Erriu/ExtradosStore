@@ -1,4 +1,4 @@
-﻿namespace ExtradosStore.Common.CustomExceptions
+﻿namespace ExtradosStore.Common.CustomExceptions.UserExceptions
 {
     public class PhoneNumberAlreadyExistsException : Exception
     {

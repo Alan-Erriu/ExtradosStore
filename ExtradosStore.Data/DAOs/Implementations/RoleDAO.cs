@@ -18,6 +18,8 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlSelectAllNamesRole = "SELECT role_name FROM [role] where role_name = @Name";
 
+        private string _sqlSelectNameRoleById = "SELECT role_name FROM [role] where role_id = @IdRole";
+
         public RoleDAO(IOptions<SQLServerConfig> bdConfig)
         {
             _SQLServerConfig = bdConfig.Value;
@@ -79,6 +81,27 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
                     var parameters = new { Name = nameRole };
                     var nameRoleFound = await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectAllNamesRole, parameters);
+
+                    return nameRoleFound;
+
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<string> DataGetNameRoleById(string nameRole)
+        {
+            try
+            {
+
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+
+                    var parameters = new { IdRole = nameRole };
+                    var nameRoleFound = await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectNameRoleById, parameters);
 
                     return nameRoleFound;
 

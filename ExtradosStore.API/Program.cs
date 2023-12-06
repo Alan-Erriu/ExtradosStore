@@ -1,4 +1,5 @@
 using ExtradosStore.Configuration.DBConfiguration;
+using ExtradosStore.Configuration.JWTConfiguration;
 using ExtradosStore.Data.DAOs.Implementations;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Services.Implementations;
@@ -13,10 +14,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRoleDAO, RoleDAO>();
 builder.Services.AddScoped<IAuthDAO, AuthDAO>();
+builder.Services.AddScoped<IJWTDAO, JWTDAO>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IHasherService, Argon2HasherService>();
+builder.Services.AddScoped<IJWTService, JWTService>();
+builder.Services.AddScoped<IHasherService, BcryptHasher>();
 builder.Services.Configure<SQLServerConfig>(builder.Configuration.GetSection("DBTestConnection"));
+builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("JwtSettings"));
 //******************* end dependecies and options **********************
 var app = builder.Build();
 

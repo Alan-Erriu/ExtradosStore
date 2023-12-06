@@ -27,7 +27,7 @@ Las clase que maneja Extrados Store para administrar sus usuarios son las siguie
 |   user_password_hash     | string       |
 |   user_roleid            | (fk role)    |
 |   user_status            | bool         |
-|   long user_created_at   | long(epoch)  |
+|   user_created_at        | long(epoch)  |
 |   user_date_of_birth     | long (epoch) |
 
 #### 3. Role

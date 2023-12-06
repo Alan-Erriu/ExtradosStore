@@ -1,4 +1,4 @@
-﻿using ExtradosStore.Common.CustomExceptions;
+﻿using ExtradosStore.Common.CustomExceptions.UserExceptions;
 using ExtradosStore.Common.CustomRequest.AuthRequest;
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +41,37 @@ namespace ExtradosStore.API.Controllers
             catch (EmailAlreadyExistsException ex)
             {
                 return Conflict(ex.Message);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error register a new user {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "server error:");
+            }
+
+
+        }
+
+        [HttpPost("signin")]
+
+        public async Task<IActionResult> signIn([FromBody] LoginUserRequest loginRequest)
+        {
+
+            try
+            {
+                var user = await _authService.SignInService(loginRequest);
+                if (user == null) return NotFound("user not found");
+                return Ok(user);
+            }
+            catch (IncorrectPasswordException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized("incorrect pasword");
+            }
+            catch (DisabledUserException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized(ex.Message);
             }
             catch (Exception Ex)
             {
