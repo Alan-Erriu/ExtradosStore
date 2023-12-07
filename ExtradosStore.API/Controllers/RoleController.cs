@@ -1,5 +1,6 @@
 ﻿using ExtradosStore.Entities.DTOs.RoleDTOs;
 using ExtradosStore.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
@@ -15,7 +16,7 @@ namespace ExtradosStore.API.Controllers
         {
             _roleService = roleService;
         }
-
+        [Authorize(Roles = "admin")]
         [HttpPost("create")]
 
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleDTO roleRequest)
@@ -23,7 +24,7 @@ namespace ExtradosStore.API.Controllers
             try
             {
                 CreateRoleDTO roleCreated = await _roleService.CreateRoleService(roleRequest);
-                return Ok(roleCreated);
+                return Ok("succes");
             }
             catch (DuplicateNameException ex)
             {
@@ -37,7 +38,7 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error:");
             }
         }
-
+        [Authorize(Roles = "admin")]
         [HttpGet("getroles")]
 
         public async Task<IActionResult> GetRoles()

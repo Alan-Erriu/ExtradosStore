@@ -82,7 +82,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error register a new user {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "server error");
             }
 
 
