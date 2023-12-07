@@ -4,6 +4,7 @@ using ExtradosStore.Data.DAOs.Implementations;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Services.Implementations;
 using ExtradosStore.Services.Interfaces;
+using ExtradosStore.Services.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddScoped<IJWTDAO, JWTDAO>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
+builder.Services.AddScoped<IValidations, Validations>();
 builder.Services.AddScoped<IHasherService, BcryptHasher>();
 builder.Services.Configure<SQLServerConfig>(builder.Configuration.GetSection("DBTestConnection"));
 builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("JwtSettings"));

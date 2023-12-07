@@ -9,7 +9,7 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<CreateRoleDTO> DataCreateRole(CreateRoleDTO roleRequest);
         Task<List<Role>> DataGetRoles();
         Task<string> DataGetNameRoleById(int idRole);
-
+        Task<int> DataGetIdRoleByName(string nameRole);
 
     }
 }

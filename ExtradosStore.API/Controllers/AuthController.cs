@@ -1,7 +1,10 @@
-﻿using ExtradosStore.Common.CustomExceptions.UserExceptions;
+﻿using ExtradosStore.Common.CustomExceptions.JWTExceptions;
+using ExtradosStore.Common.CustomExceptions.UserExceptions;
 using ExtradosStore.Common.CustomRequest.AuthRequest;
+using ExtradosStore.Entities.DTOs.JWTDTOs;
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ExtradosStore.API.Controllers
 {
@@ -11,10 +14,11 @@ namespace ExtradosStore.API.Controllers
     {
 
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly IJWTService _jwtService;
+        public AuthController(IAuthService authService, IJWTService jwtService)
         {
-
             _authService = authService;
+            _jwtService = jwtService;
         }
         // registrarse como usuario - rol=(user)
 
@@ -25,7 +29,8 @@ namespace ExtradosStore.API.Controllers
 
             try
             {
-                var user = await _authService.SignUpService(createUserRequest);
+                var rowsAffected = await _authService.SignUpService(createUserRequest);
+
 
                 return Ok("Succes");
             }
@@ -59,9 +64,9 @@ namespace ExtradosStore.API.Controllers
 
             try
             {
-                var user = await _authService.SignInService(loginRequest);
-                if (user == null) return NotFound("user not found");
-                return Ok(user);
+                var userTokens = await _authService.SignInService(loginRequest);
+
+                return Ok(userTokens);
             }
             catch (IncorrectPasswordException ex)
             {
@@ -81,6 +86,59 @@ namespace ExtradosStore.API.Controllers
             }
 
 
+        }
+
+
+
+        [HttpPost("gettoken")]
+        public async Task<IActionResult> GetRefreshToken([FromBody] AccesAndRefreshTokenDTO acessAndRefreshTokenRequest)
+        {
+            try
+            {
+
+
+                var newTokes = await _authService.GenerateRereshTokensService(acessAndRefreshTokenRequest);
+
+                return Ok(newTokes);
+
+
+            }
+            catch (SecurityTokenException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized("invalid token");
+            }
+            //refresh token distinto al de la db
+            catch (InvalidRefreshTokenException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized("invalid refresh token");
+            }
+            //refresh token caducado en db
+            catch (ExpiredRefreshTokenException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized("refresh token expired");
+            }
+            //falta algun claim en el access token
+            catch (MissingClaimsException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized("invalid access token");
+            }
+            catch (Exception ex)
+            {
+
+                //CompareRefreshTokens() lanza este error cuando el token, no es un token o no tiene un formato jwt valido 
+                if (ex.Message.Contains("IDX12723"))
+                {
+                    Console.WriteLine(ex.Message);
+                    return Unauthorized("Invalid access token format");
+                }
+
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(500, "Internal Server Error");
+            }
         }
     }
 }

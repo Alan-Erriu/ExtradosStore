@@ -12,12 +12,13 @@ namespace ExtradosStore.Data.DAOs.Implementations
     {
         private SQLServerConfig _SQLServerConfig;
 
-        private string _sqlInsertRefreshToken = @"INSERT INTO [token_history] (iduser_tokenhistory,token_tokenhistory,refresh_Token_tokenhistory,
-          expiration_date_tokenhistory) VALUES (@IdUser,@Token,@RefreshToken,@ExpirationDate)";
+        private string _sqlInsertRefreshToken = @"INSERT INTO [token] (token_userid,token_accesstoken,token_refreshToken,
+          token_expiration_date_refreshtoken) VALUES (@IdUser,@Token,@RefreshToken,@ExpirationDate)";
 
-        private string _SqlSelectRefreshToken = "SELECT * FROM [token_history] WHERE iduser_tokenhistory = @Id";
+        private string _SqlSelectRefreshToken = @"SELECT token_userid,token_accesstoken,token_refreshToken, token_expiration_date_refreshtoken 
+                                                  FROM [token] WHERE token_userid = @Id";
 
-        private string _sqlDeleteRefreshTokenExpired = "delete from [token_history] where iduser_tokenhistory = @Id";
+        private string _sqlDeleteRefreshTokenExpired = "delete from [token] where token_userid = @Id";
 
         public JWTDAO(IOptions<SQLServerConfig> bdConfig)
         {
@@ -31,7 +32,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 {
                     var parameters = new
                     {
-                        IdUser = tokenRequest.token_iduser,
+                        IdUser = tokenRequest.token_userid,
                         Token = tokenRequest.token_accesstoken,
                         RefreshToken = tokenRequest.token_refreshToken,
                         ExpirationDate = tokenRequest.token_expiration_date_refreshtoken

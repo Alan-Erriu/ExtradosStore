@@ -7,6 +7,6 @@ namespace ExtradosStore.Data.DAOs.Interfaces
     {
         Task<int> DataDeleteRefreshTokenExpired(int userId);
         Task<AccesAndRefreshTokenDTO> DataInsertRefreshToken(Token tokenRequest);
-        Task<AccesAndRefreshTokenDTO> DataSelectRefreshToken(int id_user);
+        Task<Token> DataSelectRefreshToken(int id_user);
     }
 }
