@@ -113,8 +113,9 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
                 {
                     var parameters = new { PhoneNumber = PohoneNumberRequest };
-                    var phoneNumberFound = await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectPhoneNumberUser, parameters);
-                    return phoneNumberFound;
+
+                    return await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectPhoneNumberUser, parameters);
+
 
                 }
 

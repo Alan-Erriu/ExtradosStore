@@ -1,157 +1,82 @@
-﻿
+﻿using Dapper;
+using ExtradosStore.Configuration.DBConfiguration;
+using ExtradosStore.Data.DAOs.Interfaces;
+using ExtradosStore.Entities.Models;
+using Microsoft.Extensions.Options;
+using System.Data.SqlClient;
 
-//using ExtradosStore.Entities.Models;
-//using Microsoft.Extensions.Options;
-//using System.Data.SqlClient;
+namespace ExtradosStore.Data.DAOs.Implementations
+{
+    public class UserDAO : IUserDAO
+    {
 
-//namespace ExtradosStore.Data.DAOs.Implementations
-//{
-//    public class UserDAO
-//    {
-
-//        private BDConfig _bdConfig;
-
-//        private string _sqlInsertUser = "INSERT INTO [user] (name_user, mail_user, password_user ) VALUES (@Name, @Mail, @Password)";
-
-//        private string _sqlInsertUserWithRole = "INSERT INTO [user] (name_user, mail_user, password_user,role_user ) VALUES (@Name, @Mail, @Password,@Role)";
-
-//        private string _sqlSelectUserID = "SELECT id_user from [user] where mail_user =@Mail and password_user =@Password";
-
-//        private string _sqlSelectUser = "SELECT id_user, name_user, mail_user, password_user FROM [user] WHERE id_user = @Id";
-
-//        private string _sqlEditUserName = "UPDATE [user] SET name_user = @Name WHERE id_user = @Id";
-
-//        private string _sqlDeleteUser = "delete from [user] WHERE id_user = @Id";
-
-//        private string _sqlSelectAllUsersMail = "SELECT mail_user FROM [user] where mail_user = @Mail";
+        private SQLServerConfig _SQLServerConfig;
 
 
-//        public UserRepository(IOptions<BDConfig> bdConfig)
-//        {
-//            _bdConfig = bdConfig.Value;
+        public UserDAO(IOptions<SQLServerConfig> bdConfig)
+        {
+            _SQLServerConfig = bdConfig.Value;
 
-//        }
+        }
 
+        private string _sqlUpdateStatusUser = "UPDATE [user] SET user_status = @StatusUser WHERE user_id = @UserId";
 
+        private string _sqlUpdateRolUser = "UPDATE [user] SET user_roleid = @RoleId WHERE user_id = @UserId";
 
+        private string _sqlSelectUserById = @"SELECT user_id,user_name,user_lastname, user_email, user_date_of_birth, user_roleid,user_status,user_created_at
+                                              FROM [user] WHERE user_id = @Id ";
 
-//        //crear un nuevo usuario con roles, los roles solo pueden coincidir con los registrados en la tabla "role"
-//        //Solo el usuario "Admin" va a tener acceso a este metodo
-//        public async Task<CreateUserWithRoleDTO> DataCreateUserWithRole(CreateUserWithRoleRequest newUser)
-//        {
-//            try
-//            {
+        // habilita o deshabilita. StatusUser en 1 para habilitar, statusUser en 0 para deshabilitar
+        public async Task<int> DataUpdateStatusUser(int userId, int statusUser)
+        {
+            try
+            {
 
-//                using (var connection = new SqlConnection(_bdConfig.ConnectionStrings))
-//                {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { UserId = userId, StatusUser = statusUser };
+                    var queryUpdateStatusUser = await connection.ExecuteAsync(_sqlUpdateStatusUser, parameters);
+                    return queryUpdateStatusUser;
+                }
+            }
+            catch
+            {
 
-//                    var parameters = new { Name = newUser.name_user, Mail = newUser.mail_user, Password = newUser.password_user, @Role = newUser.role_user };
-//                    var queryInsert = await connection.ExecuteAsync(_sqlInsertUserWithRole, parameters);
-//                    var querySelect = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectUserID, new { Mail = newUser.mail_user, Password = newUser.password_user });
-//                    return new CreateUserWithRoleDTO { id_user = querySelect, name_user = newUser.name_user, mail_user = newUser.mail_user, role_user = newUser.role_user, msg = "ok" };
-//                }
-//            }
-//            catch (Exception ex)
-//            {
+                throw;
+            }
 
-//                Console.WriteLine($"error database: {ex.Message}");
-//                return new CreateUserWithRoleDTO { msg = "error database" };
-//            }
+        }
+        //actualiza el rol del usario, espera id de usuario y id del rol 
+        public async Task<int> DataUpdateRolUser(int userId, int roleId)
+        {
+            try
+            {
 
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { UserId = userId, RoleId = roleId };
+                    var queryUpdateStatusUser = await connection.ExecuteAsync(_sqlUpdateStatusUser, parameters);
+                    return queryUpdateStatusUser;
+                }
+            }
+            catch
+            {
 
-//        }
+                throw;
+            }
 
-//        public async Task<User> DataGetUserByID(int id_user)
-//        {
-//            try
-//            {
-//                using (var connection = new SqlConnection(_bdConfig.ConnectionStrings))
-//                {
-//                    var parameters = new { Id = id_user };
-//                    var user = await connection.QueryFirstOrDefaultAsync<User>(_sqlSelectUser, parameters);
-//                    if (user == null) return null;
-//                    return new User { id_user = user.id_user, name_user = user.name_user, mail_user = user.mail_user, password_user = user.password_user };
-//                }
-
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine($"error database: {ex.Message}");
-//                return null;
-
-//            }
-
-
-//        }
-//        public async Task<User> DataCompareEmailUserByMail(string mail_user)
-//        {
-//            try
-//            {
-
-//                using (var connection = new SqlConnection(_bdConfig.ConnectionStrings))
-//                {
-//                    var parameters = new { Mail = mail_user };
-//                    var mailFound = await connection.QueryFirstOrDefaultAsync<User>(_sqlSelectAllUsersMail, parameters);
-//                    return mailFound;
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.Message);
-//                throw new Exception("error getting user mail");
-//            }
+        }
 
 
-//        }
+        public async Task<User> DataGetUserById(int userId)
+        {
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { UserId = userId };
+                return await connection.QueryFirstOrDefaultAsync<User>(_sqlSelectUserById, parameters);
 
-//        public async Task<int> DataUpdateUserById(UpdateUserRequest updateUserRequestDTO)
-//        {
-//            var rowsAffected = 0;
+            }
 
-//            try
-//            {
-//                using (var connection = new SqlConnection(_bdConfig.ConnectionStrings))
-//                {
-//                    var parameters = new { Name = updateUserRequestDTO.name_user, Id = updateUserRequestDTO.id_user };
-
-
-//                    rowsAffected = await connection.ExecuteAsync(_sqlEditUserName, parameters);
-
-
-//                }
-//                return rowsAffected;
-//            }
-//            catch (Exception ex)
-//            {
-
-//                Console.WriteLine(ex.Message);
-//                return rowsAffected;
-//            }
-
-
-
-//        }
-
-//        public async Task<int> DataDeleteUserById(int id)
-//        {
-//            var rowsAffected = 0;
-//            try
-//            {
-//                using (var connection = new SqlConnection(_bdConfig.ConnectionStrings))
-//                {
-//                    rowsAffected = await connection.ExecuteAsync(_sqlDeleteUser, new { Id = id });
-
-//                    Console.WriteLine($"{rowsAffected} fila afectada");
-
-//                    return rowsAffected;
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine(ex.Message);
-//                return 0;
-//            }
-
-//        }
-//    }
-//}
+        }
+    }
+}
