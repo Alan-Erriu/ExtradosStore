@@ -29,15 +29,20 @@ namespace ExtradosStore.API.Controllers
             try
             {
 
-                await _userService.DisableUserService(userId);
+                var rowsAffected = await _userService.DisableUserService(userId);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
                 await _jwtService.DeleteRefreshTokenExpiredFromBd(userId);
-
-                return Ok("user disable");
+                return Ok("now user is disable");
             }
-            catch (UserNotFoundExceptioncs ex)
+            catch (UserNotFoundException ex)
             {
                 Console.WriteLine(ex.Message);
                 return NotFound("user not found");
+            }
+            catch (InvalidCastException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("the user was already disabled");
             }
             catch (Exception Ex)
             {
@@ -55,14 +60,54 @@ namespace ExtradosStore.API.Controllers
             try
             {
 
-                var user = await _userService.DisableUserService(userId);
-                if (user == 0) return StatusCode(500, "server error");
-                return Ok("user disable");
+                var rowsAffected = await _userService.EnableUserService(userId);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
+                return Ok("now user is enable");
             }
-            catch (UserNotFoundExceptioncs ex)
+            catch (UserNotFoundException ex)
             {
                 Console.WriteLine(ex.Message);
                 return NotFound("user not found");
+            }
+            catch (InvalidCastException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("the user was already enable");
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error{Ex.Message}");
+                Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
+                return StatusCode(500, "server error:");
+            }
+        }
+
+        [HttpPut("upgrade/{userId}")]
+        [Authorize(Roles = "admin")]
+
+        public async Task<IActionResult> UpgradeRoleFromUserToAdmin(int userId)
+        {
+            try
+            {
+
+                var rowsAffected = await _userService.UpgradeRoleFromUserToAdminService(userId);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
+                return Ok("now user is admin");
+            }
+            catch (UserNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("user not found");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("role *admin* not found");
+            }
+            catch (InvalidCastException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("The user's role was already admin in the database");
             }
             catch (Exception Ex)
             {

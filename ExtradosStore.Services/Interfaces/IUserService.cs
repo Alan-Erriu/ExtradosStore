@@ -4,5 +4,6 @@
     {
         Task<int> DisableUserService(int idUser);
         Task<int> EnableUserService(int idUser);
+        Task<int> UpgradeRoleFromUserToAdminService(int userId);
     }
 }

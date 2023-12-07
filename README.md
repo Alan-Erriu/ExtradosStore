@@ -228,4 +228,4 @@ Devuelve los roles
 |   Not Found  |  404   |   {"user not found"}   |
 |   Fallo      |  500   |   { "Server error" }   |
 
-Devuelve los roles
+Caso exitoso cambia el status del usuario a false

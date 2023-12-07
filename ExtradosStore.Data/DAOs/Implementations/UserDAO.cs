@@ -24,7 +24,9 @@ namespace ExtradosStore.Data.DAOs.Implementations
         private string _sqlUpdateRolUser = "UPDATE [user] SET user_roleid = @RoleId WHERE user_id = @UserId";
 
         private string _sqlSelectUserById = @"SELECT user_id,user_name,user_lastname, user_email, user_date_of_birth, user_roleid,user_status,user_created_at
-                                              FROM [user] WHERE user_id = @Id ";
+                                              FROM [user] WHERE user_id = @UserId ";
+
+        private string _sqlUpdateRoleFromUserToAdmin = "UPDATE [user] SET user_roleid = @roleId WHERE user_id = @UserId";
 
         // habilita o deshabilita. StatusUser en 1 para habilitar, statusUser en 0 para deshabilitar
         public async Task<int> DataUpdateStatusUser(int userId, int statusUser)
@@ -70,11 +72,41 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         public async Task<User> DataGetUserById(int userId)
         {
-            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            try
             {
-                var parameters = new { UserId = userId };
-                return await connection.QueryFirstOrDefaultAsync<User>(_sqlSelectUserById, parameters);
 
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { UserId = userId };
+                    var user = await connection.QueryFirstOrDefaultAsync<User>(_sqlSelectUserById, parameters);
+
+                    return user;
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+
+        }
+        public async Task<int> DataUpgradeRoleFromUserToAdmin(int userId, int roleId)
+        {
+            try
+            {
+
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { UserId = userId, RoleId = roleId };
+                    var rowsAffected = await connection.ExecuteAsync(_sqlUpdateRoleFromUserToAdmin, parameters);
+
+                    return rowsAffected;
+                }
+            }
+            catch
+            {
+
+                throw;
             }
 
         }
