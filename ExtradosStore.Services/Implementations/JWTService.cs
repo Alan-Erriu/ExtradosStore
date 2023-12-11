@@ -93,7 +93,7 @@ namespace ExtradosStore.Services.Implementations
             return tokenSaved;
         }
 
-        //recibe un access token (expirado o no expirado) y retorna un nuevo access token y un refresh token
+        //recibe un access token y retorna un nuevo access token y un refresh token
         public async Task<AccesAndRefreshTokenDTO> ReturnRefreshToken(string accessTokenRequest)
         {
             try

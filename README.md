@@ -9,6 +9,28 @@
 **Extrados Store** es una API De ecommerce donde los usuarios pueden registrarse, vender sus productos o comprar productos publicados por otros usuarios.
 
 
+## Capas
+
+El proyecto esta estructurado de forma que api consume a servicios y este a daos.
+La capa config contiene informacion sensible neceseria para jwt y db
+La capa common es el lugar donde se ubica todo aquello que necesitamos en varias capas como las custom exceptions
+La capa entities contien los modelos y los DTOs
+
+ │   ├── api
+ │   │   └── 
+ │   ├── services
+ │   │   └── 
+ │   ├── data
+ │   │   └── 
+ │   ├── config
+ │   │   └── 
+ │   ├── common
+ │   │   └── 
+ │   ├── entities
+
+
+
+
 ## Modelo de clases
 
 Las clase que maneja Extrados Store para administrar sus usuarios son las siguientes:
@@ -229,3 +251,61 @@ Devuelve los roles
 |   Fallo      |  500   |   { "Server error" }   |
 
 Caso exitoso cambia el status del usuario a false
+
+#### 3 (Category)
+
+Las publicaciones estan enlazadas a una cetegoria mediante un id. Por ejemplo zapatillas adidas formaría parte de la categoria zapatillas. 
+
+#### 1 Crear categoria
+
+  ##### `POST /api/Auth/gettoken` 
+ 
+En el body de la request, (requiere admin role)
+
+
+```json
+
+{
+    "category_name":"zapatillas"
+}
+
+````
+
+|   Caso       | Status |      Respuesta                        |
+| :-------:    | :----: | :---------------------------------:   |
+|   Exito      |  200   | { "category created" }                |
+| Unauthorized |  401   |                                       |
+|   Forbidden  |  403   |                                       |
+|   Conflict   |  409   | {"name category is already in use"}   |
+|   Fallo      |  500   |   { "Server error" }                  |
+
+
+ #### 2 Borrar una categoría por id
+  
+  #####  `DELETE /api/Category/delete/(idcategory)`
+
+  No se puede eliminar una categoria que ya este enlazada a una publicacion, este endpoint es por si se creo una categoria erronea o no es necesaria.
+  (requiere admin role)
+
+|   Caso       | Status |                     Respuesta                                       |
+| :-------:    | :----: | :---------------------------------------------------------:         |
+|   Exito      |  200   | { "category created" }                                              |
+| Unauthorized |  401   |                                                                     |
+|   Forbidden  |  403   |                                                                     |
+| Not found    |  404   |  {"id category not found"}                                          |
+| Bad request  |  400   |  {"You cannot delete a category associated with an existing post"}  |
+|   Conflict   |  409   | {"name category is already in use"}                                 |
+|   Fallo      |  500   |   { "Server error" }                                                |
+
+
+
+ #### 3 Obtener la lista de categorias creadas
+  
+  #####  `GET /api/Category/getcategorys`
+
+|   Caso       | Status |     Respuesta              |
+| :-------:    | :----: | :----------------------:   |
+|   Exito      |  200   | { [all categgorys] }       |
+| Unauthorized |  401   |                            |
+|   Forbidden  |  403   |                            |
+|   Fallo      |  500   |   { "Server error" }       |

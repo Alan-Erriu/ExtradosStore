@@ -16,14 +16,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//*********DAOS*******************************
 builder.Services.AddScoped<IRoleDAO, RoleDAO>();
 builder.Services.AddScoped<IAuthDAO, AuthDAO>();
 builder.Services.AddScoped<IJWTDAO, JWTDAO>();
 builder.Services.AddScoped<IUserDAO, UserDAO>();
+builder.Services.AddScoped<IPostDAO, PostDAO>();
+builder.Services.AddScoped<IBrandDAO, BrandDAO>();
+builder.Services.AddScoped<ICategoryDAO, CategoryDAO>();
+builder.Services.AddScoped<IOfferDAO, OfferDAO>();
+//*************Services*********************************
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IValidations, Validations>();
 builder.Services.AddScoped<IHasherService, BcryptHasher>();
 builder.Services.Configure<SQLServerConfig>(builder.Configuration.GetSection("DBTestConnection"));
