@@ -1,6 +1,7 @@
 ﻿using ExtradosStore.Common.CustomExceptions.PostExceptions;
 using ExtradosStore.Common.CustomRequest.BrandRequest;
 using ExtradosStore.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
 
@@ -18,12 +19,12 @@ namespace ExtradosStore.API.Controllers
 
 
 
-
+        [Authorize(Roles = "admin")]
         [HttpPost("create")]
 
         public async Task<IActionResult> CreateNewBrand([FromBody] CreateBrandRequest createBrandRequest)
-        {
 
+        {
             try
             {
                 var rowsAffected = await _brandService.CreateBrandService(createBrandRequest.brand_name);
@@ -44,7 +45,7 @@ namespace ExtradosStore.API.Controllers
         }
 
 
-
+        [Authorize(Roles = "admin")]
         [HttpDelete("delete/{brandId}")]
 
         public async Task<IActionResult> DeleteBrandById(int brandId)
@@ -81,7 +82,7 @@ namespace ExtradosStore.API.Controllers
             }
 
         }
-
+        [Authorize(Roles = "admin")]
         [HttpGet("getbrands")]
 
         public async Task<IActionResult> GetAllBrands()

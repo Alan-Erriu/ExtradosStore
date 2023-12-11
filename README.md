@@ -13,22 +13,27 @@
 
 El proyecto esta estructurado de forma que api consume a servicios y este a daos.
 La capa config contiene informacion sensible neceseria para jwt y db
-La capa common es el lugar donde se ubica todo aquello que necesitamos en varias capas como las custom exceptions
+La capa common es el lugar donde se ubica todo aquello que necesitamos en varias capas como las custom exceptions, las request y demas...
 La capa entities contien los modelos y los DTOs
 
- │   ├── api
- │   │   └── 
- │   ├── services
- │   │   └── 
- │   ├── data
- │   │   └── 
- │   ├── config
- │   │   └── 
- │   ├── common
- │   │   └── 
- │   ├── entities
+ ```
+.
 
+├── ExtradoStore
+│   ├── api
+│   │   └──
+│   ├── services
+│   │   └── ... 
+│   ├── data
+│   │   └── ...
+│   ├── config
+│   │   └── ...
+│   ├── common
+│   │   └── ...
+│   ├── entities
+│   │   └── ... 
 
+```
 
 
 ## Modelo de clases
@@ -289,12 +294,11 @@ En el body de la request, (requiere admin role)
 
 |   Caso       | Status |                     Respuesta                                       |
 | :-------:    | :----: | :---------------------------------------------------------:         |
-|   Exito      |  200   | { "category created" }                                              |
+|   Exito      |  200   | { "category deleted" }                                              |
 | Unauthorized |  401   |                                                                     |
 |   Forbidden  |  403   |                                                                     |
 | Not found    |  404   |  {"id category not found"}                                          |
 | Bad request  |  400   |  {"You cannot delete a category associated with an existing post"}  |
-|   Conflict   |  409   | {"name category is already in use"}                                 |
 |   Fallo      |  500   |   { "Server error" }                                                |
 
 
@@ -309,3 +313,63 @@ En el body de la request, (requiere admin role)
 | Unauthorized |  401   |                            |
 |   Forbidden  |  403   |                            |
 |   Fallo      |  500   |   { "Server error" }       |
+
+
+#### 4 (Brand)
+
+Todas las publicaciones estan enlazadas a una marca, se necesita ser administrador para manejar el crud.
+
+####
+
+#### 1 Crear brand 
+
+  ##### `POST /api/brand/create` 
+ 
+En el body de la request, (requiere admin role)
+
+
+```json
+
+{
+    "brand_name":"adidas"
+}
+
+````
+
+|   Caso       | Status |      Respuesta                        |
+| :-------:    | :----: | :---------------------------------:   |
+|   Exito      |  200   | { "brand created" }                   |
+| Unauthorized |  401   |                                       |
+|   Forbidden  |  403   |                                       |
+|   Conflict   |  409   | {"the name brand is already in use"}  |
+|   Fallo      |  500   |   { "Server error" }                  |
+
+
+#### 2 Obtener array de todos los brand 
+
+  ##### `GET /api/Brand/getbrands`
+
+|   Caso       | Status |     Respuesta        |
+| :-------:    | :----: | :-------------------:|
+|   Exito      |  200   | { [all brands] }     |
+| Unauthorized |  401   |                      |
+|   Forbidden  |  403   |                      |
+|   Fallo      |  500   | { "Server error" }   |
+
+
+
+ #### 3 Borrar una marca por id
+  
+  #####  `DELETE /api/Brand/delete/(idcategory)`
+
+  No se puede eliminar una marca que ya este enlazada a una publicacion, este endpoint es por si se creo una marca erronea o no es necesaria.
+  (requiere admin role)
+
+|   Caso       | Status |                     Respuesta                                   |
+| :-------:    | :----: | :---------------------------------------------------------:     |
+|   Exito      |  200   | { "brand deleted" }                                             |
+| Unauthorized |  401   |                                                                 |
+|   Forbidden  |  403   |                                                                 |
+| Not found    |  404   |  {"id category not found"}                                      |
+| Bad request  |  400   |  {"You cannot delete a brand associated with an existing post"} |
+|   Fallo      |  500   |   { "Server error" }                                            |
