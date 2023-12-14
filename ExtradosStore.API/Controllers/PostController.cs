@@ -1,4 +1,5 @@
-﻿using ExtradosStore.Common.CustomRequest.PostRequest;
+﻿using ExtradosStore.Common.CustomExceptions.PostStatusExceptions;
+using ExtradosStore.Common.CustomRequest.PostRequest;
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace ExtradosStore.API.Controllers
             _postService = postService;
 
         }
-        // registrarse como usuario - rol=(user)
+
 
         [HttpPost("create")]
         [Authorize(Roles = "admin, user")]
@@ -30,20 +31,17 @@ namespace ExtradosStore.API.Controllers
                 if (userIdClaim == null) return StatusCode(401, "Unauthorized");
 
 
-                if (int.TryParse(userIdClaim.Value, out int userId))
-                {
-                    createNewPostRequest.post_userId = userId;
+                int.TryParse(userIdClaim.Value, out int userId);
 
-                    var rowsAffected = await _postService.CreatePostService(createNewPostRequest);
-                    if (rowsAffected == 0) return StatusCode(500, "server error");
+                createNewPostRequest.post_userId = userId;
+
+                var rowsAffected = await _postService.CreatePostService(createNewPostRequest);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
 
 
-                    return Ok("post created");
-                }
-                else
-                {
-                    return StatusCode(500, "Error converting user ID to integer");
-                }
+                return Ok("post created");
+
+
             }
             catch (Exception ex)
             {
@@ -51,6 +49,81 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error");
             }
         }
+        [HttpPut("statuspaused/{postId}")]
+        [Authorize(Roles = "admin, user")]
+
+        public async Task<IActionResult> SetStatusToPaused(int postId)
+        {
+            try
+            {
+
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var userRolName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+                int.TryParse(userIdClaim.Value, out int userId);
+                // atado con alambre :(
+                string newStatus = "paused";
+                var rowsAffected = await _postService.SetStatusActiveToPaused(postId, userId, userRolName.Value, newStatus);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
+                return Ok("post status now is paused");
+
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized();
+            }
+            catch (PostStatusNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("status id not found");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error when modifying the status of the publication: {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+        [HttpPut("statuscancelled/{postId}")]
+        [Authorize(Roles = "admin, user")]
+
+        public async Task<IActionResult> SetStatusToCancelled(int postId)
+        {
+            try
+            {
+
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var userRolName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+                int.TryParse(userIdClaim.Value, out int userId);
+                // atado con alambre :(
+                string newStatus = "cancelled";
+                var rowsAffected = await _postService.SetStatusActiveToPaused(postId, userId, userRolName.Value, newStatus);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
+                return Ok("post status now is paused");
+
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized();
+            }
+            catch (PostStatusNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("status id not found");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error when modifying the status of the publication: {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+
         [HttpGet("getall")]
         [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> GetAllPostActiveWithOffer()
@@ -58,24 +131,7 @@ namespace ExtradosStore.API.Controllers
             try
             {
 
-                var allPostActiveWithOffer = await _postService.GetAllPostActiveWithOffer();
-                return Ok(allPostActiveWithOffer);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
-            }
-        }
-        [HttpGet("getall2")]
-        //[Authorize(Roles = "admin, user")]
-        public async Task<IActionResult> GetAllPostActiveWithOffer2()
-        {
-            try
-            {
-
-                var allPostActiveWithOffer = await _postService.GetAllPostActiveService2();
+                var allPostActiveWithOffer = await _postService.GetAllPostActiveService();
                 return Ok(allPostActiveWithOffer);
 
             }

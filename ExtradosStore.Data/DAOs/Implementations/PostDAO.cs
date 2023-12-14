@@ -22,6 +22,12 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlSelectAllPostActive = "SELECT post_id,post_userid,post_name,post_description,post_price,post_stock,post_categoryId,post_create_at,post_brandId FROM [post] ";
 
+        private string _sqlSetStatusActiveToPaused = @"UPDATE [post] SET post_status_id = @StatusId WHERE post_id = @PostId";
+
+        private string _sqlSelectUserIdByPostUserId = @"SELECT post_userId FROM [post] WHERE post_id = @PostId";
+
+        private string _sqlUpdateStockPost = @"UPDATE [post] SET post_stock = @Stock, post_status_id = @StatusId WHERE post_id = @PostId"
+;
 
 
 
@@ -56,7 +62,54 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 throw;
             }
         }
+        public async Task<int> DataGetUserIdByPostUserId(int postId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { PostId = postId };
+                    return await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectUserIdByPostUserId, parameters);
+                }
+            }
+            catch
+            {
 
+                throw;
+            }
+        }
+        public async Task<int> DataUpdateStockAndSetStatusActive(int postId, int statusId, int newStock)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { PostId = postId, StatusId = statusId, Stock = newStock };
+                    return await connection.ExecuteAsync(_sqlUpdateStockPost, parameters);
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> DataSetStatusActiveToPaused(int statusId, int postId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { StatusId = statusId, PostId = postId };
+                    return await connection.ExecuteAsync(_sqlSetStatusActiveToPaused, parameters);
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
 
         public async Task<List<Post>> DataGetAllPostActive()
         {

@@ -60,8 +60,53 @@ namespace ExtradosStore.Services.Implementations
             }
         }
 
+        public async Task<int> SetStatusActiveToPaused(int postId, int userIdFromToken, string nameRole, string newStatus)
+        {
+            try
+            {
+
+                var postUserIdFromDB = await _postDao.DataGetUserIdByPostUserId(postId);
+                if (userIdFromToken != postUserIdFromDB && nameRole == "user")
+                {
+                    throw new UnauthorizedAccessException("the user role can only modify the status of their posts");
+                }
+
+                var statusPausedId = await _postStatusDAO.DataGetPostStatusIdByName(newStatus);
+                if (statusPausedId == 0) throw new PostStatusNotFoundException();
+
+
+                return await _postDao.DataSetStatusActiveToPaused(statusPausedId, postId);
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> SetStatusActiveAndUpdateStock(int postId, int userIdFromToken, string newStatus, int newStock)
+        {
+            try
+            {
+
+                var postUserIdFromDB = await _postDao.DataGetUserIdByPostUserId(postId);
+                if (userIdFromToken != postUserIdFromDB) throw new UnauthorizedAccessException("the user can only modify the status of their posts");
+
+                var statusPausedId = await _postStatusDAO.DataGetPostStatusIdByName(newStatus);
+                if (statusPausedId == 0) throw new PostStatusNotFoundException();
+
+                var rowsAffected = await _postDao.DataUpdateStockAndSetStatusActive(postId, statusPausedId, newStock);
+
+
+                return rowsAffected;
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
         //faltan validaciones
-        public async Task<List<PostActiveDTO>> GetAllPostActiveService2()
+        public async Task<List<PostActiveDTO>> GetAllPostActiveService()
         {
             try
             {
