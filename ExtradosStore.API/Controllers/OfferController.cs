@@ -1,6 +1,7 @@
 ﻿using ExtradosStore.Common.CustomExceptions.PostExceptions;
 using ExtradosStore.Common.CustomRequest.OfferRequest;
 using ExtradosStore.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExtradosStore.API.Controllers
@@ -19,6 +20,7 @@ namespace ExtradosStore.API.Controllers
 
 
         [HttpPost("create")]
+        [Authorize(Roles = "admin, user")]
 
         public async Task<IActionResult> CreateNewOffer([FromBody] CreateOfferRequest createOfferRequest)
         {

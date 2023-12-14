@@ -38,7 +38,7 @@ La capa entities contien los modelos y los DTOs
 
 ## Modelo de clases
 
-Las clase que maneja Extrados Store para administrar sus usuarios son las siguientes:
+Las clases que maneja Extrados Store para administrar sus usuarios son las siguientes:
 
 #### 1. User
 
@@ -87,9 +87,16 @@ Este modelo contiene los datos del refresh token
 ## Endpoints 
 
 La API cuenta con 3 tipos de endpoints: 
+<n/>
 **Auth** que corresponde a iniciar sesion,tokens y registrarse.
+<n/>
 **Role** que corresponde a las acciones relacionadas con los roles (crear y obtener info)
+<n/>
 **User** que corresponde a todo lo que tenga que ver con operaciones crud del usuario (algunas solo se puede acceder siendo admin)
+<n/>
+**category** crear categorias para las publicaciones
+<n/>
+**brand** creat marcas para las publicaciones
 Casi todos los endpoints necesitan un token en la cabezera para funcionar, de no recibirlo se obtendra un Unauthorize(401)
 
 
@@ -247,17 +254,51 @@ Devuelve los roles
    ##### `PUT /api/User/disable/userId`
 
 
-|   Caso       | Status |      Respuesta         |
-| :-------:    | :----: | :---------------------:|
-|   Exito      |  200   |   { "user disable"  }  |
-| Unauthorized |  401   |                        |
-|   Forbidden  |  403   |                        |
-|   Not Found  |  404   |   {"user not found"}   |
-|   Fallo      |  500   |   { "Server error" }   |
+|   Caso       | Status |      Respuesta                 |
+| :-------:    | :----: | :---------------------:        |
+|   Exito      |  200   |   { "user disable"  }          |
+| Unauthorized |  401   |                                |
+|   Forbidden  |  403   |                                |
+|   Not Found  |  404   |   {"user not found"}           |
+| Conflict     |  409   |{"the user was already disable"}|
+|   Fallo      |  500   |   { "Server error" }           |
 
 Caso exitoso cambia el status del usuario a false
 
-#### 3 (Category)
+#### 2 Habilita un usuario. Requiere rol admin
+
+   ##### `PUT /api/User/enable/userId`
+
+
+|   Caso       | Status |      Respuesta                 |
+| :-------:    | :----: | :---------------------:        |
+|   Exito      |  200   |   { "user enable"  }           |
+| Unauthorized |  401   |                                |
+|   Forbidden  |  403   |                                |
+|   Not Found  |  404   |   {"user not found"}           |
+| Conflict     |  409   |{"the user was already enable"} | 
+|   Fallo      |  500   |   { "Server error" }           |
+
+Caso exitoso cambia el status del usuario a true
+
+#### 3 Pasa el rol de un usuario de user a admin. Requiere rol admin
+
+   ##### `PUT /api/User/uprgrade/userId`
+
+
+|   Caso       | Status |      Respuesta                                       |
+| :-------:    | :----: | :---------------------:                              |
+|   Exito      |  200   |   { "now user is admin"  }                           |
+| Unauthorized |  401   |                                                      |
+|   Forbidden  |  403   |                                                      |
+|   Not Found  |  404   |   {"role *admin* not found"}                         |
+| Conflict     |  409   |{"The user's role was already admin in the database"} | 
+|   Fallo      |  500   |   { "Server error" }                                 |
+
+Caso exitoso cambia el status del usuario a true
+
+
+#### 4 (Category)
 
 Las publicaciones estan enlazadas a una cetegoria mediante un id. Por ejemplo zapatillas adidas formaría parte de la categoria zapatillas. 
 
@@ -315,7 +356,7 @@ En el body de la request, (requiere admin role)
 |   Fallo      |  500   |   { "Server error" }       |
 
 
-#### 4 (Brand)
+#### 5 (Brand)
 
 Todas las publicaciones estan enlazadas a una marca, se necesita ser administrador para manejar el crud.
 

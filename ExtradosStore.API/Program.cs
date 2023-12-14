@@ -25,8 +25,11 @@ builder.Services.AddScoped<IPostDAO, PostDAO>();
 builder.Services.AddScoped<IBrandDAO, BrandDAO>();
 builder.Services.AddScoped<ICategoryDAO, CategoryDAO>();
 builder.Services.AddScoped<IOfferDAO, OfferDAO>();
+builder.Services.AddScoped<IOfferPostDAO, OfferPostDAO>();
+builder.Services.AddScoped<IPostStatusDAO, PostStatusDAO>();
 //*************Services*********************************
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IOfferPostService, OfferPostService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
@@ -39,7 +42,6 @@ builder.Services.AddScoped<IHasherService, BcryptHasher>();
 builder.Services.Configure<SQLServerConfig>(builder.Configuration.GetSection("DBTestConnection"));
 builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("JwtSettings"));
 //******************* end dependecies and options **********************
-
 
 
 //*****************config jwt**************************************
@@ -62,6 +64,9 @@ builder.Services.AddAuthentication(config =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]))
     };
 });
+
+
+
 //*******cors****************************
 
 builder.Services.AddCors(options =>

@@ -1,9 +1,13 @@
 ﻿using ExtradosStore.Common.CustomRequest.OfferRequest;
+using ExtradosStore.Entities.Models;
 
-namespace ExtradosStore.Data.DAOs.Implementations
+namespace ExtradosStore.Data.DAOs.Interfaces
 {
     public interface IOfferDAO
     {
         Task<int> DataCreateOffer(CreateOfferRequest offerRequest);
+
+        Task<List<int>> GetOfferExpiratedData();
+        Task<List<Offer>> GetAllOffer();
     }
 }

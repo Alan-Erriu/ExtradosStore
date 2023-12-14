@@ -30,7 +30,7 @@ namespace ExtradosStore.API.Controllers
             {
 
                 var rowsAffected = await _userService.DisableUserService(userId);
-                if (rowsAffected == 0) return StatusCode(500, "server error");
+
                 await _jwtService.DeleteRefreshTokenExpiredFromBd(userId);
                 return Ok("now user is disable");
             }
@@ -42,7 +42,7 @@ namespace ExtradosStore.API.Controllers
             catch (InvalidCastException ex)
             {
                 Console.WriteLine(ex.Message);
-                return BadRequest("the user was already disabled");
+                return Conflict("the user was already disabled");
             }
             catch (Exception Ex)
             {
@@ -72,7 +72,7 @@ namespace ExtradosStore.API.Controllers
             catch (InvalidCastException ex)
             {
                 Console.WriteLine(ex.Message);
-                return BadRequest("the user was already enable");
+                return Conflict("the user was already enable");
             }
             catch (Exception Ex)
             {
@@ -107,7 +107,7 @@ namespace ExtradosStore.API.Controllers
             catch (InvalidCastException ex)
             {
                 Console.WriteLine(ex.Message);
-                return BadRequest("The user's role was already admin in the database");
+                return Conflict("The user's role was already admin in the database");
             }
             catch (Exception Ex)
             {

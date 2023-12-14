@@ -1,5 +1,5 @@
 ﻿using ExtradosStore.Common.CustomRequest.OfferRequest;
-using ExtradosStore.Data.DAOs.Implementations;
+using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Services.Interfaces;
 
 namespace ExtradosStore.Services.Implementations

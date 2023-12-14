@@ -12,7 +12,7 @@
         public int post_brandId { get; set; }
         public int post_categoryId { get; set; }
         public long post_create_at { get; set; }
-        public bool post_status { get; set; }
+        public bool post_status_id { get; set; }
 
     }
 }

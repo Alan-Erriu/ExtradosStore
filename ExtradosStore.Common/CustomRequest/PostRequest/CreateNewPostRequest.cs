@@ -21,6 +21,6 @@ namespace ExtradosStore.Common.CustomRequest.PostRequest
         [Required]
         public int category_id { get; set; }
         [Required]
-        public bool post_status { get; set; }
+        public int post_status_id { get; set; }
     }
 }

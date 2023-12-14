@@ -8,5 +8,6 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<int> DataUpdateStatusUser(int userId, int statusUser);
         Task<int> DataUpgradeRoleFromUserToAdmin(int userId, int roleId);
         Task<User> DataGetUserById(int userId);
+        Task<List<User>> DataGetAllUser();
     }
 }
