@@ -1,5 +1,4 @@
 ﻿using ExtradosStore.Common.CustomRequest.PostRequest;
-using ExtradosStore.Entities.DTOs.PostDTOs;
 
 namespace ExtradosStore.Services.Interfaces
 {
@@ -7,8 +6,10 @@ namespace ExtradosStore.Services.Interfaces
     {
         Task<int> CreatePostService(CreateNewPostRequest postRequest);
 
-        Task<List<PostActiveDTO>> GetAllPostActiveService();
+        Task<int> SetPostStatus(int postId, int userIdFromToken, string nameRole, string newStatus);
 
-        Task<int> SetStatusActiveToPaused(int postId, int userIdFromToken, string nameRole, string newStatus);
+        Task<int> SetStatusActiveAndUpdateStock(int postId, int userIdFromToken, string newStatus, int newStock);
+        Task<int> UpdatePostService(UpdatePostRequest updateRequest, int userIdFromToken);
+
     }
 }

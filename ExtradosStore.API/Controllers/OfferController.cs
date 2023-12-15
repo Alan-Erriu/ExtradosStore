@@ -1,5 +1,4 @@
-﻿using ExtradosStore.Common.CustomExceptions.PostExceptions;
-using ExtradosStore.Common.CustomRequest.OfferRequest;
+﻿using ExtradosStore.Common.CustomRequest.OfferRequest;
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,11 +28,6 @@ namespace ExtradosStore.API.Controllers
             {
                 var rowsAffected = await _offerService.CreateOfferService(createOfferRequest);
                 return Ok("offer created");
-            }
-            catch (DuplicateNameCategoryException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return Conflict("the name offer is already in use");
             }
             catch (Exception Ex)
             {

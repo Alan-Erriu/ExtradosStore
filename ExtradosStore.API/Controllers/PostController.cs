@@ -62,9 +62,9 @@ namespace ExtradosStore.API.Controllers
 
                 if (userIdClaim == null) return StatusCode(401, "Unauthorized");
                 int.TryParse(userIdClaim.Value, out int userId);
-                // atado con alambre :(
+
                 string newStatus = "paused";
-                var rowsAffected = await _postService.SetStatusActiveToPaused(postId, userId, userRolName.Value, newStatus);
+                var rowsAffected = await _postService.SetPostStatus(postId, userId, userRolName.Value, newStatus);
                 if (rowsAffected == 0) return StatusCode(500, "server error");
                 return Ok("post status now is paused");
 
@@ -99,11 +99,48 @@ namespace ExtradosStore.API.Controllers
 
                 if (userIdClaim == null) return StatusCode(401, "Unauthorized");
                 int.TryParse(userIdClaim.Value, out int userId);
-                // atado con alambre :(
+
                 string newStatus = "cancelled";
-                var rowsAffected = await _postService.SetStatusActiveToPaused(postId, userId, userRolName.Value, newStatus);
+                var rowsAffected = await _postService.SetPostStatus(postId, userId, userRolName.Value, newStatus);
                 if (rowsAffected == 0) return StatusCode(500, "server error");
-                return Ok("post status now is paused");
+                return Ok("post status now is cancelled");
+
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized();
+            }
+            catch (PostStatusNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("status id not found");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error when modifying the status of the publication: {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+        [HttpPut("statusactive/{postId}/{stock}")]
+        [Authorize(Roles = "admin, user")]
+
+        public async Task<IActionResult> SetStatusToActiveAndUpdateStock(int postId, int stock)
+        {
+            try
+            {
+
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var userRolName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+                int.TryParse(userIdClaim.Value, out int userId);
+
+                string newStatus = "active";
+                var rowsAffected = await _postService.SetStatusActiveAndUpdateStock(postId, userId, newStatus, stock);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
+                return Ok("post status now is active");
 
 
             }
@@ -124,22 +161,48 @@ namespace ExtradosStore.API.Controllers
             }
         }
 
-        [HttpGet("getall")]
+        [HttpPut("update")]
         [Authorize(Roles = "admin, user")]
-        public async Task<IActionResult> GetAllPostActiveWithOffer()
+
+        public async Task<IActionResult> UpdatePost([FromBody] UpdatePostRequest updatePostRequest)
         {
+            if (updatePostRequest.postPrice < 0) return BadRequest("Post price must have a valid positive value");
+
+            if (updatePostRequest.postStock < 0) return BadRequest("Post stock must have a valid positive value");
+
             try
             {
 
-                var allPostActiveWithOffer = await _postService.GetAllPostActiveService();
-                return Ok(allPostActiveWithOffer);
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
+
+                int.TryParse(userIdClaim.Value, out int userId);
+                if (userId == 0) return StatusCode(401, "Unauthorized");
+
+
+                var rowsAffected = await _postService.UpdatePostService(updatePostRequest, userId);
+                if (rowsAffected == 0) return StatusCode(500, "server error");
+                return Ok("update post");
+
+
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("post not found");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
+                Console.WriteLine($"error when modifying the publication: {ex.Message} {ex.StackTrace}");
                 return StatusCode(500, "server error");
             }
         }
+
+
     }
 }

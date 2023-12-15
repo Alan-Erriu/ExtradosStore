@@ -29,6 +29,7 @@ builder.Services.AddScoped<IOfferPostDAO, OfferPostDAO>();
 builder.Services.AddScoped<IPostStatusDAO, PostStatusDAO>();
 //*************Services*********************************
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IPostSearchService, PostSearchService>();
 builder.Services.AddScoped<IOfferPostService, OfferPostService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();

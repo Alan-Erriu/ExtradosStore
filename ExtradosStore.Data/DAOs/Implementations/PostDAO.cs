@@ -24,10 +24,13 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlSetStatusActiveToPaused = @"UPDATE [post] SET post_status_id = @StatusId WHERE post_id = @PostId";
 
-        private string _sqlSelectUserIdByPostUserId = @"SELECT post_userId FROM [post] WHERE post_id = @PostId";
+        private string _sqlSelectUserIdByPostId = @"SELECT post_userId FROM [post] WHERE post_id = @PostId";
 
-        private string _sqlUpdateStockPost = @"UPDATE [post] SET post_stock = @Stock, post_status_id = @StatusId WHERE post_id = @PostId"
-;
+        private string _sqlUpdateStockPost = @"UPDATE [post] SET post_stock = @Stock, post_status_id = @StatusId WHERE post_id = @PostId";
+
+
+        private string _sqlSelecPostStatusByPostId = @"select post_status_id From [post] where post_id = @PostId";
+
 
 
 
@@ -62,14 +65,34 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 throw;
             }
         }
-        public async Task<int> DataGetUserIdByPostUserId(int postId)
+        public async Task<int> DataGetUserIdByPostId(int postId)
         {
             try
             {
                 using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
                 {
                     var parameters = new { PostId = postId };
-                    return await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectUserIdByPostUserId, parameters);
+                    return await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectUserIdByPostId, parameters);
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<int> DataGetStatusIdByPostId(int postId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { PostId = postId };
+
+                    var PostStatusId = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelecPostStatusByPostId, parameters);
+
+                    return PostStatusId;
                 }
             }
             catch
@@ -131,6 +154,53 @@ namespace ExtradosStore.Data.DAOs.Implementations
             }
         }
 
+        public async Task<int> DataUpdatePost(UpdatePostRequest updateRequest)
+        {
+            var dynamicParameters = new DynamicParameters();
+            var updateFields = new List<string>();
+
+            if (!string.IsNullOrEmpty(updateRequest.postName))
+            {
+                dynamicParameters.Add("PostName", updateRequest.postName);
+                updateFields.Add("post_name = @PostName");
+            }
+
+            if (!string.IsNullOrEmpty(updateRequest.postDescription))
+            {
+                dynamicParameters.Add("PostDescription", updateRequest.postDescription);
+                updateFields.Add("post_description = @PostDescription");
+            }
+
+            if (updateRequest.postPrice != 0)
+            {
+                dynamicParameters.Add("PostPrice", updateRequest.postPrice);
+                updateFields.Add("post_price = @PostPrice");
+            }
+            if (updateRequest.postStock != 0)
+            {
+                dynamicParameters.Add("PostStock", updateRequest.postStock);
+                updateFields.Add("post_stock = @PostStock");
+            }
+            if (updateRequest.postCategoryId != 0)
+            {
+                dynamicParameters.Add("PostCategoryId", updateRequest.postCategoryId);
+                updateFields.Add("post_categoryId = @PostCategoryId");
+            }
+            if (updateRequest.postBrandId != 0)
+            {
+                dynamicParameters.Add("PostBranId", updateRequest.postBrandId);
+                updateFields.Add("post_brandId = @PostBranId");
+            }
+
+
+            var sql = $"UPDATE [post] SET {string.Join(", ", updateFields)} WHERE post_id = @PostId";
+            dynamicParameters.Add("PostId", updateRequest.postId);
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                return await connection.ExecuteAsync(sql, dynamicParameters);
+            }
+        }
 
 
     }

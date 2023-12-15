@@ -8,17 +8,25 @@ namespace ExtradosStore.Services.Implementations
     {
         IOfferPostDAO _offerPostDAO;
         IOfferDAO _offerDAO;
-        public OfferPostService(IOfferPostDAO offerPostDAO, IOfferDAO offerDAO)
+        IPostDAO _postDAO;
+        IPostStatusDAO _postStatusDAO;
+        public OfferPostService(IOfferPostDAO offerPostDAO, IOfferDAO offerDAO, IPostDAO postDAO, IPostStatusDAO postStatusDAO)
         {
             _offerPostDAO = offerPostDAO;
             _offerDAO = offerDAO;
+            _postDAO = postDAO;
+            _postStatusDAO = postStatusDAO;
+
+
         }
 
         public async Task<int> AddPostToOfferService(AddPostToOfferRequest addPostToOfferRequest)
         {
             try
             {
-
+                var postStatusIdFromBack = await _postDAO.DataGetStatusIdByPostId(addPostToOfferRequest.offer_post_postId);
+                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+                if (postStatusIdFromBack != statusActiveId) throw new InvalidOperationException("Only active posts can be added to offers");
                 var rowsAffected = await _offerPostDAO.AddPostToOfferData(addPostToOfferRequest);
                 return rowsAffected;
             }
@@ -33,13 +41,13 @@ namespace ExtradosStore.Services.Implementations
         {
             try
             {
-                Console.WriteLine("servicio background");
+
                 var listOfferExpirated = await _offerDAO.GetOfferExpiratedData();
                 int rowsAffected = 0;
                 foreach (var item in listOfferExpirated)
                 {
                     rowsAffected = await _offerPostDAO.DeleteOfferPostExpirated(item);
-                    Console.WriteLine("servicio background");
+
                 }
                 return rowsAffected;
 

@@ -2,7 +2,6 @@
 using ExtradosStore.Common.CustomExceptions.PostStatusExceptions;
 using ExtradosStore.Common.CustomRequest.PostRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
-using ExtradosStore.Entities.DTOs.PostDTOs;
 using ExtradosStore.Services.Interfaces;
 
 namespace ExtradosStore.Services.Implementations
@@ -60,12 +59,12 @@ namespace ExtradosStore.Services.Implementations
             }
         }
 
-        public async Task<int> SetStatusActiveToPaused(int postId, int userIdFromToken, string nameRole, string newStatus)
+        public async Task<int> SetPostStatus(int postId, int userIdFromToken, string nameRole, string newStatus)
         {
             try
             {
 
-                var postUserIdFromDB = await _postDao.DataGetUserIdByPostUserId(postId);
+                var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(postId);
                 if (userIdFromToken != postUserIdFromDB && nameRole == "user")
                 {
                     throw new UnauthorizedAccessException("the user role can only modify the status of their posts");
@@ -88,7 +87,7 @@ namespace ExtradosStore.Services.Implementations
             try
             {
 
-                var postUserIdFromDB = await _postDao.DataGetUserIdByPostUserId(postId);
+                var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(postId);
                 if (userIdFromToken != postUserIdFromDB) throw new UnauthorizedAccessException("the user can only modify the status of their posts");
 
                 var statusPausedId = await _postStatusDAO.DataGetPostStatusIdByName(newStatus);
@@ -105,42 +104,20 @@ namespace ExtradosStore.Services.Implementations
                 throw;
             }
         }
-        //faltan validaciones
-        public async Task<List<PostActiveDTO>> GetAllPostActiveService()
+
+
+
+        public async Task<int> UpdatePostService(UpdatePostRequest updateRequest, int userIdFromToken)
         {
             try
             {
+                var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(updateRequest.postId);
+                if (postUserIdFromDB == 0) throw new KeyNotFoundException("post not found in data base");
+                if (userIdFromToken != postUserIdFromDB) throw new UnauthorizedAccessException("the user can only modify the status of their posts");
 
-                var listPost = await _postDao.DataGetAllPostActive();
-                var listUser = await _userDao.DataGetAllUser();
-                var listOfferPost = await _offerPostDao.DataGetAllOfferPost();
-                var listOffer = await _offerDao.GetAllOffer();
-                var listBrand = await _brandDao.DataGetAllBrands();
-                var listCategory = await _categoryDao.DataGetAllCategorys();
+                var rowsAffected = await _postDao.DataUpdatePost(updateRequest);
+                return rowsAffected;
 
-
-                var result = (from post in listPost
-                              join user in listUser on post.post_userId equals user.user_id
-                              join offerPost in listOfferPost on post.post_id equals offerPost.offer_post_postId
-                              join offer in listOffer on offerPost.offer_post_offerId equals offer.offer_id
-                              join category in listCategory on post.post_categoryId equals category.category_id
-                              join brand in listBrand on post.post_brandId equals brand.brand_id
-                              select new PostActiveDTO
-                              {
-                                  post_id = post.post_id,
-                                  post_name = post.post_name,
-                                  user_name = user.user_name,
-                                  post_description = post.post_description,
-                                  post_price = post.post_price,
-                                  offer_post_discount = offerPost.offer_post_discount,
-                                  priceNow = post.post_price,
-                                  img = post.post_img,
-                                  offer_name = offer.offer_name,
-                                  category_name = category.category_name,
-                                  brand_name = brand.brand_name
-                              }).ToList();
-
-                return result;
             }
             catch
             {
@@ -148,6 +125,6 @@ namespace ExtradosStore.Services.Implementations
             }
         }
 
-
     }
 }
+

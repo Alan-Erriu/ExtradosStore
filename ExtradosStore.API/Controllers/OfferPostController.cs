@@ -24,8 +24,13 @@ namespace ExtradosStore.API.Controllers
             try
             {
                 var rowsAffected = await _offerPostService.AddPostToOfferService(addPostToOfferRequest);
-                if (rowsAffected == 0) return StatusCode(500, "testeando servicio");
+                if (rowsAffected == 0) return StatusCode(500, "server error");
                 return Ok("product added to offer");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("Only active posts can be added to offers");
             }
             catch (Exception ex)
             {
