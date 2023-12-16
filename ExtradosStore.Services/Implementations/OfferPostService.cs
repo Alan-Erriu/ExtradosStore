@@ -21,12 +21,12 @@ namespace ExtradosStore.Services.Implementations
 
         }
 
-        public async Task<int> AddPostToOfferService(AddPostToOfferRequest addPostToOfferRequest, int userIdFromToken, string nameRole)
+        public async Task<int> AddPostToOfferService(AddPostToOfferRequest addPostToOfferRequest, int userIdFromToken)
         {
             try
             {
                 var postUserIdFromDB = await _postDAO.DataGetUserIdByPostId(addPostToOfferRequest.offer_post_postId);
-                if (userIdFromToken != postUserIdFromDB && nameRole == "user")
+                if (userIdFromToken != postUserIdFromDB)
                 {
                     throw new UnauthorizedAccessException("the user id of the token is different from that of the publication");
                 }
@@ -72,8 +72,8 @@ namespace ExtradosStore.Services.Implementations
             try
             {
 
-                var rowsAffected = await _offerPostDAO.DeleteOfferPostByPostId(offerId);
-                if (rowsAffected == 0) throw new KeyNotFoundException("the postId not found in offer_post table");
+                var rowsAffected = await _offerPostDAO.DeleteAllOfferPostByOfferId(offerId);
+
                 return rowsAffected;
             }
             catch

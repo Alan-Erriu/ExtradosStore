@@ -1,10 +1,12 @@
 ﻿using Dapper;
 using ExtradosStore.Common.CustomRequest.PostRequest;
+using ExtradosStore.Common.CustomRequest.PostSearchRequest;
 using ExtradosStore.Configuration.DBConfiguration;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.Models;
 using Microsoft.Extensions.Options;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace ExtradosStore.Data.DAOs.Implementations
 {
@@ -201,6 +203,40 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 return await connection.ExecuteAsync(sql, dynamicParameters);
             }
         }
+
+
+        public async Task<List<Post>> SearchPost(PostSearchRequest postSearchRequest)
+        {
+            var sqlBuilder = new StringBuilder("SELECT * FROM [post] WHERE 1 = 1");
+
+            var dynamicParameters = new DynamicParameters();
+
+            if (postSearchRequest.postCategoryId != 0)
+            {
+                sqlBuilder.Append(" AND post_categoryId = @CategoryId");
+                dynamicParameters.Add("CategoryId", postSearchRequest.postCategoryId);
+            }
+
+            if (postSearchRequest.postBrandId != 0)  // Corregir la condición aquí
+            {
+                sqlBuilder.Append(" AND post_brandId = @BrandId");
+                dynamicParameters.Add("BrandId", postSearchRequest.postBrandId);
+            }
+
+            if (!string.IsNullOrEmpty(postSearchRequest.postName))
+            {
+                sqlBuilder.Append(" AND post_name LIKE @PostName");
+                dynamicParameters.Add("PostName", $"%{postSearchRequest.postName}%");
+            }
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var listPost = (await connection.QueryAsync<Post>(sqlBuilder.ToString(), dynamicParameters)).ToList();
+                Console.WriteLine(dynamicParameters);
+                return listPost;
+            }
+        }
+
 
 
     }

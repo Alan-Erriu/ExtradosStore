@@ -1,13 +1,13 @@
-﻿using ExtradosStore.Data.DAOs.Interfaces;
+﻿using ExtradosStore.Common.CustomRequest.PostSearchRequest;
+using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.DTOs.PostDTOs;
+using ExtradosStore.Entities.Models;
 using ExtradosStore.Services.Interfaces;
 
 namespace ExtradosStore.Services.Implementations
 {
     public class PostSearchService : IPostSearchService
     {
-
-
 
         private readonly IPostDAO _postDao;
         private readonly IBrandDAO _brandDao;
@@ -224,6 +224,18 @@ namespace ExtradosStore.Services.Implementations
             }
             catch
             {
+                throw;
+            }
+        }
+        public async Task<List<Post>> SearchPost(PostSearchRequest postSearchRequest)
+        {
+            try
+            {
+                return await _postDao.SearchPost(postSearchRequest);
+            }
+            catch
+            {
+
                 throw;
             }
         }

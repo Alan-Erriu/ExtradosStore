@@ -1,4 +1,5 @@
 ﻿using ExtradosStore.Common.CustomRequest.PostRequest;
+using ExtradosStore.Common.CustomRequest.PostSearchRequest;
 using ExtradosStore.Entities.Models;
 
 namespace ExtradosStore.Data.DAOs.Interfaces
@@ -12,6 +13,7 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<int> DataUpdateStockAndSetStatusActive(int postId, int statusId, int newStock);
         Task<int> DataUpdatePost(UpdatePostRequest updateRequest);
         Task<int> DataGetStatusIdByPostId(int postId);
+        Task<List<Post>> SearchPost(PostSearchRequest postSearchRequest);
 
 
     }

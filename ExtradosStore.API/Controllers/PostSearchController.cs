@@ -1,4 +1,5 @@
-﻿using ExtradosStore.Services.Interfaces;
+﻿using ExtradosStore.Common.CustomRequest.PostSearchRequest;
+using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,7 +66,21 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error");
             }
         }
-
+        [HttpGet("searchpost")]
+        [Authorize(Roles = "admin, user")]
+        public async Task<IActionResult> SearhPost(PostSearchRequest postSearchRequest)
+        {
+            try
+            {
+                var allPost = await _postSearchService.SearchPost(postSearchRequest);
+                return Ok(allPost);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
         //***************************************************  enpoints para admin  **************************************//
         [HttpGet("getallwithoffer")]
         [Authorize(Roles = "admin")]

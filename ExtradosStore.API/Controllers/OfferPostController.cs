@@ -34,7 +34,7 @@ namespace ExtradosStore.API.Controllers
 
 
                 int.TryParse(userIdClaim.Value, out int userId);
-                var rowsAffected = await _offerPostService.AddPostToOfferService(addPostToOfferRequest, userId, userRolName.ToString());
+                var rowsAffected = await _offerPostService.AddPostToOfferService(addPostToOfferRequest, userId);
                 if (rowsAffected == 0) return StatusCode(500, "server error");
                 return Ok("product added to offer");
             }
@@ -75,7 +75,7 @@ namespace ExtradosStore.API.Controllers
                 if (userIdClaim == null) return StatusCode(401, "Unauthorized");
 
                 int.TryParse(userIdClaim.Value, out int userId);
-                var rowsAffected = await _offerPostService.DeleteOfferPostByPostId(postId, userId, userRolName.ToString());
+                var rowsAffected = await _offerPostService.DeleteOfferPostByPostId(postId, userId, userRolName.Value);
 
                 return Ok("offer post deleted");
             }
@@ -106,8 +106,8 @@ namespace ExtradosStore.API.Controllers
             {
 
 
-
-
+                var rowsAffected = await _offerPostService.DeleteAllOfferPostByOfferId(offerID);
+                if (rowsAffected == 0) return BadRequest("testeando enpoint");
                 return Ok("All offer posts were deleted");
             }
 
