@@ -14,6 +14,23 @@ namespace ExtradosStore.API.Controllers
             _postSearchService = postSearchService;
 
         }
+        [HttpGet("getallactive")]
+        [Authorize(Roles = "admin, user")]
+        public async Task<IActionResult> GetAllActivePostsWithNoOfferOrExpiredOffer()
+        {
+            try
+            {
+
+                var allPostActive = await _postSearchService.GetAllActivePostsWithNoOfferOrExpiredOffer();
+                return Ok(allPostActive);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
         [HttpGet("getallactivewithoffer")]
         [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> GetAllPostActiveWithOffer()
@@ -22,6 +39,23 @@ namespace ExtradosStore.API.Controllers
             {
 
                 var allPostActiveWithOffer = await _postSearchService.GetAllPostActiveWithOfferService();
+                return Ok(allPostActiveWithOffer);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+        [HttpGet("getallActivebyofferid/{offerId}")]
+        [Authorize(Roles = "admin, user")]
+        public async Task<IActionResult> GetAllPostActiveByOfferId(int offerId)
+        {
+            try
+            {
+
+                var allPostActiveWithOffer = await _postSearchService.GetAllPostActiveByOfferId(offerId);
                 return Ok(allPostActiveWithOffer);
 
             }

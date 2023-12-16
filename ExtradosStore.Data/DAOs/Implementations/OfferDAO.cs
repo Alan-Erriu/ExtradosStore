@@ -21,6 +21,8 @@ namespace ExtradosStore.Data.DAOs.Implementations
                                               (@OfferName, @OfferDateStart, @OfferDateExpiration)";
         private string _sqlSelectOfferExpirated = "SELECT offer_id FROM [offer] where offer_date_expiration > @DateTimeNow";
 
+        private string _sqlSelectExpirationDateByOfferId = @"SELECT offer_date_expiration FROM [offer] WHERE offer_id =@OfferID";
+
         private string _sqlSelectAllOffer = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration FROM [offer] ";
         public async Task<int> DataCreateOffer(CreateOfferRequest offerRequest)
         {
@@ -51,7 +53,27 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 throw;
             }
         }
+        public async Task<long> DataGetExpirationDateByOfferId(int offerID)
+        {
+            try
+            {
 
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new
+                    {
+                        OfferID = offerID
+                    };
+                    var expirationDate = await connection.QueryFirstOrDefaultAsync<long>(_sqlSelectExpirationDateByOfferId, parameters);
+                    return expirationDate;
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
         public async Task<List<Offer>> GetAllOffer()
         {
             try

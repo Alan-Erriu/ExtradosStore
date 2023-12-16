@@ -9,5 +9,6 @@ namespace ExtradosStore.Data.DAOs.Interfaces
 
         Task<List<int>> GetOfferExpiratedData();
         Task<List<Offer>> GetAllOffer();
+        Task<long> DataGetExpirationDateByOfferId(int offerID);
     }
 }

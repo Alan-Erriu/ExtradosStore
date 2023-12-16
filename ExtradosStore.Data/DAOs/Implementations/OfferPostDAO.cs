@@ -19,9 +19,13 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlInserIntoOfferPost = @"INSERT INTO [offer_post]  (offer_post_postId,offer_post_offerId,offer_post_discount)      
                                                   VALUES(@OfferPostPostId,@OfferPostOfferId,@OfferPostPostDiscount)";
-        private string _sqlDeleteOfferPostExpirated = @"DELETE FROM [offer_post] WHERE offer_post_offerId = @OfferId";
+
 
         private string _sqlSelectAllOfferPost = @"SELECT offer_post_id,offer_post_postId,offer_post_offerId,offer_post_discount FROM [offer_post]";
+
+        private string _sqlSelectOfferId = @"SELECT offer_post_offerId FROM [offer_post] where offer_post_postId = @PostId";
+
+        private string _sqlDeleteOfferPostByPostId = @"DELETE from [offer_post] WHERE offer_post_postId = @PostId";
 
 
 
@@ -34,6 +38,49 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 {
                     var listOfferPost = (await connection.QueryAsync<OfferPost>(_sqlSelectAllOfferPost)).ToList();
                     return listOfferPost;
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> DataGetOfferId(int postId)
+        {
+            try
+            {
+
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new
+                    {
+                        PostId = postId
+                    };
+                    var offerIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectOfferId, parameters);
+                    return offerIdFromDB;
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> DeleteOfferPostByPostId(int postId)
+        {
+            try
+            {
+
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new
+                    {
+                        PostId = postId
+                    };
+                    var offerIdFromDB = await connection.ExecuteAsync(_sqlDeleteOfferPostByPostId, parameters);
+
+                    return offerIdFromDB;
                 }
             }
             catch
@@ -66,23 +113,6 @@ namespace ExtradosStore.Data.DAOs.Implementations
             }
         }
 
-        public async Task<int> DeleteOfferPostExpirated(int offerIdRequest)
-        {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { OfferId = offerIdRequest };
-                    var rowsAffected = await connection.ExecuteAsync(_sqlDeleteOfferPostExpirated, parameters);
-                    return rowsAffected;
-                }
-            }
-            catch
-            {
-
-                throw;
-            }
-        }
     }
 }

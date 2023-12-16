@@ -20,7 +20,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
         private string _sqlInsertNewPost = @"Insert INTO[post] (post_userid,post_name,post_description,post_price,post_stock,post_categoryId,post_create_at,post_brandId)
                                               VALUES (@UserId,@PostName,@PostDescription,@PostPrice,@PostStock,@PostCategoryId,@CreateAt,@PostBrandId) ";
 
-        private string _sqlSelectAllPostActive = "SELECT post_id,post_userid,post_name,post_description,post_price,post_stock,post_categoryId,post_create_at,post_brandId FROM [post] ";
+        private string _sqlSelectAllPost = "SELECT post_id,post_userid,post_name,post_description,post_price,post_stock,post_categoryId,post_create_at,post_brandId,post_status_id FROM [post] ";
 
         private string _sqlSetStatusActiveToPaused = @"UPDATE [post] SET post_status_id = @StatusId WHERE post_id = @PostId";
 
@@ -142,7 +142,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 {
 
 
-                    var AllPostActived = (await connection.QueryAsync<Post>(_sqlSelectAllPostActive)).ToList();
+                    var AllPostActived = (await connection.QueryAsync<Post>(_sqlSelectAllPost)).ToList();
                     return AllPostActived;
                 }
 

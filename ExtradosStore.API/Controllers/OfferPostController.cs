@@ -1,7 +1,9 @@
-﻿using ExtradosStore.Common.CustomRequest.OfferRequest;
+﻿using ExtradosStore.Common.CustomExceptions.OfferPostExceptions;
+using ExtradosStore.Common.CustomRequest.OfferRequest;
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ExtradosStore.API.Controllers
 {
@@ -23,15 +25,92 @@ namespace ExtradosStore.API.Controllers
         {
             try
             {
-                var rowsAffected = await _offerPostService.AddPostToOfferService(addPostToOfferRequest);
+
+
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var userRolName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+
+
+                int.TryParse(userIdClaim.Value, out int userId);
+                var rowsAffected = await _offerPostService.AddPostToOfferService(addPostToOfferRequest, userId, userRolName.ToString());
                 if (rowsAffected == 0) return StatusCode(500, "server error");
                 return Ok("product added to offer");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized();
+            }
+            catch (PostAlreadyInOfferException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Conflict("This publication already belongs to an active offer");
             }
             catch (InvalidOperationException ex)
             {
                 Console.WriteLine(ex.Message);
                 return BadRequest("Only active posts can be added to offers");
             }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"error:  {ex}");
+                Console.WriteLine($"stack trace: {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+        [HttpDelete("delete/{postId}")]
+        [Authorize(Roles = "admin, user")]
+
+        public async Task<IActionResult> DeleteOfferPostByPostId(int postId)
+        {
+            try
+            {
+
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                var userRolName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+
+                int.TryParse(userIdClaim.Value, out int userId);
+                var rowsAffected = await _offerPostService.DeleteOfferPostByPostId(postId, userId, userRolName.ToString());
+
+                return Ok("offer post deleted");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("offer post not found");
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"error:  {ex}");
+                Console.WriteLine($"stack trace: {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+        [HttpDelete("deleteall/{offerID}")]
+        [Authorize(Roles = "admin")]
+
+        public async Task<IActionResult> DeleteAllOfferPostByOfferId(int offerID)
+        {
+            try
+            {
+
+
+
+
+                return Ok("All offer posts were deleted");
+            }
+
             catch (Exception ex)
             {
 
