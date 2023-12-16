@@ -25,7 +25,7 @@ namespace ExtradosStore.API.Controllers
         {
             try
             {
-
+                //**todo** evitar dos post con el mismo nombre (para el mismo usuario)
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
                 if (userIdClaim == null) return StatusCode(401, "Unauthorized");
@@ -115,7 +115,7 @@ namespace ExtradosStore.API.Controllers
             catch (PostStatusNotFoundException ex)
             {
                 Console.WriteLine(ex.Message);
-                return NotFound("status id not found");
+                return NotFound("status not found");
             }
             catch (Exception ex)
             {
