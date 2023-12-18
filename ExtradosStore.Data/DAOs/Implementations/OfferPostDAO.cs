@@ -29,6 +29,8 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlDeleteAllOfferPostByOfferId = @"DELETE from [offer_post] WHERE offer_post_offerId = @OfferId";
 
+        private string _SqlSelectDiscountByPostID = @"SELECT offer_post_discount FROM [offer_post] WHERE offer_post_postId = @PostId";
+
 
 
         public async Task<List<OfferPost>> DataGetAllOfferPost()
@@ -60,6 +62,27 @@ namespace ExtradosStore.Data.DAOs.Implementations
                         PostId = postId
                     };
                     var offerIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectOfferId, parameters);
+                    return offerIdFromDB;
+                }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> DataGerDiscountByPostId(int postId)
+        {
+            try
+            {
+
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new
+                    {
+                        PostId = postId
+                    };
+                    var offerIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_SqlSelectDiscountByPostID, parameters);
                     return offerIdFromDB;
                 }
             }

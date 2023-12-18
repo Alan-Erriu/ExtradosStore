@@ -3,6 +3,7 @@ using ExtradosStore.Common.CustomRequest.PostRequest;
 using ExtradosStore.Common.CustomRequest.PostSearchRequest;
 using ExtradosStore.Configuration.DBConfiguration;
 using ExtradosStore.Data.DAOs.Interfaces;
+using ExtradosStore.Entities.DTOs.PostDTOs;
 using ExtradosStore.Entities.Models;
 using Microsoft.Extensions.Options;
 using System.Data.SqlClient;
@@ -32,6 +33,10 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
 
         private string _sqlSelecPostStatusByPostId = @"select post_status_id From [post] where post_id = @PostId";
+
+        private string _selectStatusAndStockByPostID = "SELECT post_userId,post_stock, post_status_id FROM [post] WHERE post_id = @PostId";
+
+        private string _selectPostNamePriceAndImgByPostId = @"Select post_name,post_price, post_img from [post] where post_id = @PostId";
 
 
 
@@ -83,7 +88,40 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 throw;
             }
         }
+        public async Task<StockAndStatusDTO> DataGetStatusAndStockByPostId(int postId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { PostId = postId };
+                    return await connection.QueryFirstOrDefaultAsync<StockAndStatusDTO>(_selectStatusAndStockByPostID, parameters);
+                }
+            }
+            catch
+            {
 
+                throw;
+            }
+        }
+
+        public async Task<PostPriceImgAndName> DataGetPostPriceNameAndImgById(int postId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { PostId = postId };
+                    return await connection.QueryFirstOrDefaultAsync<PostPriceImgAndName>(_selectPostNamePriceAndImgByPostId, parameters);
+                }
+            }
+
+            catch
+            {
+
+                throw;
+            }
+        }
         public async Task<int> DataGetStatusIdByPostId(int postId)
         {
             try
@@ -205,9 +243,9 @@ namespace ExtradosStore.Data.DAOs.Implementations
         }
 
 
-        public async Task<List<Post>> SearchPost(PostSearchRequest postSearchRequest)
+        public async Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest)
         {
-            var sqlBuilder = new StringBuilder("SELECT * FROM [post] WHERE 1 = 1");
+            var sqlBuilder = new StringBuilder("SELECT * FROM [post] WHERE post_status_id = 1");
 
             var dynamicParameters = new DynamicParameters();
 
@@ -217,7 +255,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 dynamicParameters.Add("CategoryId", postSearchRequest.postCategoryId);
             }
 
-            if (postSearchRequest.postBrandId != 0)  // Corregir la condición aquí
+            if (postSearchRequest.postBrandId != 0)
             {
                 sqlBuilder.Append(" AND post_brandId = @BrandId");
                 dynamicParameters.Add("BrandId", postSearchRequest.postBrandId);
@@ -231,7 +269,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
             using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                var listPost = (await connection.QueryAsync<Post>(sqlBuilder.ToString(), dynamicParameters)).ToList();
+                var listPost = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
                 Console.WriteLine(dynamicParameters);
                 return listPost;
             }

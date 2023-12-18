@@ -1,7 +1,6 @@
 ﻿using ExtradosStore.Common.CustomRequest.PostSearchRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.DTOs.PostDTOs;
-using ExtradosStore.Entities.Models;
 using ExtradosStore.Services.Interfaces;
 
 namespace ExtradosStore.Services.Implementations
@@ -227,7 +226,10 @@ namespace ExtradosStore.Services.Implementations
                 throw;
             }
         }
-        public async Task<List<Post>> SearchPost(PostSearchRequest postSearchRequest)
+
+
+
+        public async Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest)
         {
             try
             {

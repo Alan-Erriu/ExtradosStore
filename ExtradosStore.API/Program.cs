@@ -21,6 +21,7 @@ builder.Services.AddScoped<IRoleDAO, RoleDAO>();
 builder.Services.AddScoped<IAuthDAO, AuthDAO>();
 builder.Services.AddScoped<IJWTDAO, JWTDAO>();
 builder.Services.AddScoped<IUserDAO, UserDAO>();
+builder.Services.AddScoped<ICarDAO, CarDAO>();
 builder.Services.AddScoped<IPostDAO, PostDAO>();
 builder.Services.AddScoped<IBrandDAO, BrandDAO>();
 builder.Services.AddScoped<ICategoryDAO, CategoryDAO>();
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IOfferPostDAO, OfferPostDAO>();
 builder.Services.AddScoped<IPostStatusDAO, PostStatusDAO>();
 //*************Services*********************************
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IPostSearchService, PostSearchService>();
 builder.Services.AddScoped<IOfferPostService, OfferPostService>();
 builder.Services.AddScoped<IOfferService, OfferService>();

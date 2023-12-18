@@ -11,5 +11,7 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<List<OfferPost>> DataGetAllOfferPost();
         Task<int> DeleteOfferPostByPostId(int postId);
         Task<int> DeleteAllOfferPostByOfferId(int offerId);
+
+        Task<int> DataGerDiscountByPostId(int postId);
     }
 }
