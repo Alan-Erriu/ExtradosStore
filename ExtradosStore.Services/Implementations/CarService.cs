@@ -1,4 +1,5 @@
 ﻿using ExtradosStore.Common.CustomExceptions.CarExceptions;
+using ExtradosStore.Common.CustomExceptions.PostExceptions;
 using ExtradosStore.Common.CustomExceptions.PostStatusExceptions;
 using ExtradosStore.Common.CustomRequest.CarRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
@@ -36,7 +37,22 @@ namespace ExtradosStore.Services.Implementations
                 if (stockAndStatus.post_status_id != statusActiveId) throw new StatusIsNotActiveException();
                 if (stockAndStatus.post_stock < addToCarRequest.quantity) throw new StockIsLessThanQuantity();
                 if (stockAndStatus.post_userId == userId) throw new InvalidOperationException("a user cannot buy your posts");
-                return await _carDAO.DataAddtoCar(addToCarRequest, userId);
+                var listCarItemsFromBack = await _carDAO.DataGetCarByUserId(userId);
+
+
+                var existingCarItem = listCarItemsFromBack.FirstOrDefault(item => item.post_id == addToCarRequest.post_id);
+
+                if (existingCarItem == null)
+                {
+
+                    return await _carDAO.DataAddtoCar(addToCarRequest, userId);
+                }
+                existingCarItem.quantity += addToCarRequest.quantity;
+
+                await _carDAO.DataUpdateQuantity(existingCarItem.quantity, userId);
+
+
+                return existingCarItem.quantity;
             }
             catch
             {
@@ -44,13 +60,33 @@ namespace ExtradosStore.Services.Implementations
                 throw;
             }
         }
-        public async Task<List<CarDTO>> GetCarByUserId(int userId)
+        public async Task<int> RemoveOneQuantityOrDeleteItemCar(int postId, int userId)
+        {
+            try
+            {
+
+                var quantityFromDB = await _carDAO.DataGetQuantityByPostAndUserId(postId, userId);
+                if (quantityFromDB == 0) throw new PostNotFoundException();
+                quantityFromDB--;
+                if (quantityFromDB == 0) await _carDAO.DataDeleteCarItem(postId, userId);
+
+                return await _carDAO.DataUpdateQuantity(quantityFromDB, userId);
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<List<CarItemDTO>> GetCarByUserId(int userId)
         {
             try
             {
                 var listCarItemsFromDB = await _carDAO.DataGetCarByUserId(userId);
 
+                var responseCarsitems = await GetCarItemsWithDetails(listCarItemsFromDB);
 
+                return responseCarsitems;
             }
             catch
             {
@@ -60,25 +96,41 @@ namespace ExtradosStore.Services.Implementations
         }
         public async Task<List<CarItemDTO>> GetCarItemsWithDetails(List<CarDTO> listCarFromDB)
         {
-            var listCarItems = new List<CarItemDTO>();
-            var currentEpochTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            foreach (var item in listCarFromDB)
+            try
             {
 
-                var offerId = await _offerPostDAO.DataGetOfferId(item.postId);
-                var expirateDate = await _offerDAO.DataGetExpirationDateByOfferId(offerId);
-                var discount = _offerPostDAO.DataGerDiscountByPostId(item.postId);
-                var postDetails = await _postDAO.DataGetPostPriceNameAndImgById(item.postId);
-                new CarItemDTO
-                {
-                    name = postDetails.post_name,
-                    price = postDetails.post_price,
-                    img = postDetails.post_img,
-                    quantity = item.quantity
-                };
+                var listCarItems = new List<CarItemDTO>();
+                var currentEpochTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-            };
+                foreach (var item in listCarFromDB)
+                {
+                    var offerId = await _offerPostDAO.DataGetOfferId(item.post_id);
+                    var expirationDate = await _offerDAO.DataGetExpirationDateByOfferId(offerId);
+                    var discount = await _offerPostDAO.DataGerDiscountByPostId(item.post_id);
+                    var postDetails = await _postDAO.DataGetPostPriceNameAndImgById(item.post_id);
+                    var discountedPrice = (offerId != 0 && expirationDate > currentEpochTime)
+                                            ? postDetails.post_price - (postDetails.post_price * discount / 100)
+                                            : postDetails.post_price;
+
+                    listCarItems.Add(new CarItemDTO
+                    {
+                        post_id = item.post_id,
+                        name = postDetails.post_name,
+                        price = discountedPrice,
+                        img = postDetails.post_img,
+                        quantity = item.quantity
+                    });
+                }
+
+                return listCarItems;
+            }
+            catch
+            {
+
+                throw;
+            }
         }
+
 
     }
 }

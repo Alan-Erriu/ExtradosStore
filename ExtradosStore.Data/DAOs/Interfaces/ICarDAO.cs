@@ -7,6 +7,8 @@ namespace ExtradosStore.Data.DAOs.Interfaces
     {
         Task<int> DataAddtoCar(AddToCarRequest addToCarRequest, int userId);
         Task<List<CarDTO>> DataGetCarByUserId(int userId);
-        Task<int> DataUpdateQuantity(int quantity);
+        Task<int> DataUpdateQuantity(int quantity, int userId);
+        Task<int> DataGetQuantityByPostAndUserId(int postId, int userId);
+        Task<int> DataDeleteCarItem(int postId, int userId);
     }
 }

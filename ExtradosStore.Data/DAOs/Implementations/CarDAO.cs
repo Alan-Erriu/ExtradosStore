@@ -22,6 +22,10 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlUpdateQuantity = @"UPDATE [car] SET quantity = @Quantity WHERE user_id = @UserId";
 
+        private string _sqlSelectQuantityByPostAndUserId = @"SELECT quantity FROM [car] WHERE post_id = @PostId AND user_id = @UserId";
+
+        private string _sqlDeleteCarItemByPostAndUserId = @"DELETE FROM [car] WHERE post_id = @PostId AND user_id = @UserId";
+
 
 
 
@@ -66,13 +70,49 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 throw;
             }
         }
-        public async Task<int> DataUpdateQuantity(int quantity)
+        public async Task<int> DataGetQuantityByPostAndUserId(int postId, int userId)
         {
             try
             {
                 using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
                 {
-                    var parameters = new { Quantity = quantity };
+                    var parameters = new { UserId = userId, PostId = postId };
+                    var quantity = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectQuantityByPostAndUserId, parameters);
+                    return quantity;
+                }
+
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> DataDeleteCarItem(int postId, int userId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { UserId = userId, PostId = postId };
+                    return await connection.ExecuteAsync(_sqlDeleteCarItemByPostAndUserId, parameters);
+
+                }
+
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> DataUpdateQuantity(int quantity, int userId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { Quantity = quantity, UserId = userId };
                     return await connection.ExecuteAsync(_sqlUpdateQuantity, parameters);
                 }
             }

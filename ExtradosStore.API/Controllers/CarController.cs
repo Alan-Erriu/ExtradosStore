@@ -1,6 +1,8 @@
 ﻿using ExtradosStore.Common.CustomExceptions.CarExceptions;
+using ExtradosStore.Common.CustomExceptions.PostExceptions;
 using ExtradosStore.Common.CustomExceptions.PostStatusExceptions;
 using ExtradosStore.Common.CustomRequest.CarRequest;
+using ExtradosStore.Common.CustomResponse;
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,6 +69,72 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error:");
             }
 
+        }
+        [Authorize(Roles = "admin,user")]
+        [HttpGet("getcar/{userId}")]
+
+        public async Task<IActionResult> GetCarByUserId(int userId)
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+
+
+                int.TryParse(userIdClaim.Value, out int userIdFromToke);
+                var carItems = await _carService.GetCarByUserId(userId);
+
+
+                decimal totalCost = carItems.Sum(item => item.price * item.quantity);
+
+                CarResponse carResponse = new CarResponse
+                {
+                    post = carItems,
+                    total = totalCost
+                };
+
+                return Ok(carResponse);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error adding new post to car  {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "server error:");
+            }
+        }
+        [Authorize(Roles = "admin,user")]
+        [HttpDelete("delete/{postId}")]
+
+        public async Task<IActionResult> RemoveOneQuantityOrDeleteItemCar(int postId)
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+
+
+                int.TryParse(userIdClaim.Value, out int userIdFromToken);
+
+                var rowsAffected = await _carService.RemoveOneQuantityOrDeleteItemCar(postId, userIdFromToken);
+
+                return Ok("succes");
+
+
+            }
+            catch (PostNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("post not found in car");
+
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error adding new post to car  {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "server error:");
+            }
         }
     }
 }
