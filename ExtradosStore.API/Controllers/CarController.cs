@@ -136,5 +136,22 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error:");
             }
         }
+        [Authorize(Roles = "admin,user")]
+        [HttpPost("buycar/{userId}")]
+
+        public async Task<IActionResult> BuyCar(int userId)
+        {
+            try
+            {
+                var rowsAffected = await _carService.BuyCar(userId);
+                return Ok("succes");
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Error buying car {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
     }
 }

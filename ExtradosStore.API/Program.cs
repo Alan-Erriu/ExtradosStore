@@ -28,6 +28,8 @@ builder.Services.AddScoped<ICategoryDAO, CategoryDAO>();
 builder.Services.AddScoped<IOfferDAO, OfferDAO>();
 builder.Services.AddScoped<IOfferPostDAO, OfferPostDAO>();
 builder.Services.AddScoped<IPostStatusDAO, PostStatusDAO>();
+builder.Services.AddScoped<ISalesDAO, SalesDAO>();
+builder.Services.AddScoped<ISalesDetailDAO, SalesDetailDAO>();
 //*************Services*********************************
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ICarService, CarService>();
@@ -71,7 +73,6 @@ builder.Services.AddAuthentication(config =>
 
 
 //*******cors****************************
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",

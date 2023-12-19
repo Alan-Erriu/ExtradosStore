@@ -8,5 +8,6 @@ namespace ExtradosStore.Services.Interfaces
         Task<int> AddTocar(AddToCarRequest addToCarRequest, int userId);
         Task<List<CarItemDTO>> GetCarByUserId(int userId);
         Task<int> RemoveOneQuantityOrDeleteItemCar(int postId, int userId);
+        Task<int> BuyCar(int userId);
     }
 }

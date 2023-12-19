@@ -16,14 +16,20 @@ namespace ExtradosStore.Services.Implementations
         IPostStatusDAO _postStatusDAO;
         IOfferPostDAO _offerPostDAO;
         IOfferDAO _offerDAO;
+        ISalesDAO _salesDAO;
+        ISalesDetailDAO _salesDetailDAO;
 
-        public CarService(ICarDAO carDAO, IPostDAO postDAO, IPostStatusDAO postStatusDAO, IOfferPostDAO offerPostDAO, IOfferDAO offerDAO)
+        public CarService(ICarDAO carDAO, IPostDAO postDAO, IPostStatusDAO postStatusDAO, IOfferPostDAO offerPostDAO,
+            IOfferDAO offerDAO
+            , ISalesDAO salesDAO, ISalesDetailDAO salesDetailDAO)
         {
             _carDAO = carDAO;
             _postDAO = postDAO;
             _postStatusDAO = postStatusDAO;
             _offerPostDAO = offerPostDAO;
             _offerDAO = offerDAO;
+            _salesDAO = salesDAO;
+            _salesDetailDAO = salesDetailDAO;
         }
 
         public async Task<int> AddTocar(AddToCarRequest addToCarRequest, int userId)
@@ -123,6 +129,53 @@ namespace ExtradosStore.Services.Implementations
                 }
 
                 return listCarItems;
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<int> BuyCar(int userId)
+        {
+            try
+            {
+
+                var carItemsFromDB = await _carDAO.DataGetCarByUserId(userId);
+
+                if (carItemsFromDB == null || carItemsFromDB.Count == 0)
+                {
+
+                    return 0;
+                }
+                var carItems = await GetCarItemsWithDetails(carItemsFromDB);
+
+                decimal totalCompra = carItems.Sum(item => item.price * item.quantity);
+
+                int salesId = await _salesDAO.DataCreateNewSales(userId, totalCompra);
+
+                foreach (var carItem in carItems)
+                {
+
+                    var offerId = await _offerPostDAO.DataGetOfferId(carItem.post_id);
+                    var expirationDate = await _offerDAO.DataGetExpirationDateByOfferId(offerId);
+                    var discount = await _offerPostDAO.DataGerDiscountByPostId(carItem.post_id);
+
+
+
+                    await _salesDetailDAO.DataCreateNewSalesDetail(
+                        salesId,
+                        carItem.post_id,
+                        carItem.quantity,
+                        carItem.price,
+                        discount = (offerId != 0 && expirationDate > DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()) ? discount : 0
+                    );
+                }
+
+
+                //**todo** borrar el carrito
+
+                return salesId;
             }
             catch
             {
