@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using ExtradosStore.Configuration.DBConfiguration;
 using ExtradosStore.Data.DAOs.Interfaces;
+using ExtradosStore.Entities.DTOs.SalesDTO;
 using Microsoft.Extensions.Options;
 using System.Data.SqlClient;
 
@@ -17,6 +18,8 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlInsertSalesDetail = @"INSERT INTO [sales_detail] (sales_id,post_id,quantity,price,discount,subtotal)
                                                  VALUES(@SalesId,@PostId,@Quantity,@Price,@Discount,@Subtotal)";
+
+        private string _sqlSelectAllSalesDetailsBySalesId = @"SELECT post_id,quantity,subtotal,sales_id FROM[sales_detail]WHERE sales_id=@SaleId";
 
 
         public async Task<int> DataCreateNewSalesDetail(int salesId, int postId, int quantity, decimal price, int discount)
@@ -37,6 +40,25 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
                     return await connection.ExecuteAsync(_sqlInsertSalesDetail, parameters);
                 }
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+        public async Task<List<SalesDetailDTO>> DataGetAllSalesDetailBySalesId(int saleId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new { SaleId = saleId };
+                    var AllSalesDetail = (await connection.QueryAsync<SalesDetailDTO>(_sqlSelectAllSalesDetailsBySalesId, parameters)).ToList();
+
+                    return AllSalesDetail;
+                }
+
             }
             catch
             {

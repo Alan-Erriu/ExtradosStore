@@ -10,5 +10,6 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<int> DataUpdateQuantity(int quantity, int userId);
         Task<int> DataGetQuantityByPostAndUserId(int postId, int userId);
         Task<int> DataDeleteCarItem(int postId, int userId);
+        Task<int> DataDeleteAllItemsFromCar(int userId);
     }
 }

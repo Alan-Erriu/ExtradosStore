@@ -32,6 +32,7 @@ builder.Services.AddScoped<ISalesDAO, SalesDAO>();
 builder.Services.AddScoped<ISalesDetailDAO, SalesDetailDAO>();
 //*************Services*********************************
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ISalesHistoryService, SalesHistoryService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IPostSearchService, PostSearchService>();
 builder.Services.AddScoped<IOfferPostService, OfferPostService>();

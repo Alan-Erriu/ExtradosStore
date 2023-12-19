@@ -173,7 +173,7 @@ namespace ExtradosStore.Services.Implementations
                 }
 
 
-                //**todo** borrar el carrito
+                await _carDAO.DataDeleteAllItemsFromCar(userId);
 
                 return salesId;
             }

@@ -26,7 +26,30 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlDeleteCarItemByPostAndUserId = @"DELETE FROM [car] WHERE post_id = @PostId AND user_id = @UserId";
 
+        private string _sqlDeleteAllItemsFromCarByuserId = @"DELETE FROM [car] WHERE user_id=@UserId";
 
+        public async Task<int> DataDeleteAllItemsFromCar(int userId)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                {
+                    var parameters = new
+                    {
+                        UserId = userId,
+
+                    };
+                    var rowsAffected = await connection.ExecuteAsync(_sqlDeleteAllItemsFromCarByuserId, parameters);
+                    return rowsAffected;
+                };
+            }
+            catch
+            {
+
+                throw;
+            }
+
+        }
 
 
         public async Task<int> DataAddtoCar(AddToCarRequest addToCarRequest, int userId)
