@@ -18,7 +18,7 @@ namespace ExtradosStore.API.Controllers
         [Authorize(Roles = "admin,user")]
         [HttpGet("gethistory")]
 
-        public async Task<IActionResult> GetCarByUserId(int userId)
+        public async Task<IActionResult> GetPurchaseHistory()
         {
             try
             {
@@ -30,6 +30,27 @@ namespace ExtradosStore.API.Controllers
                 int.TryParse(userIdClaim.Value, out int userIdFromToken);
 
                 var historyUser = await _salesHistoryService.GetHistoryGetUserPurchaseHistory(userIdFromToken);
+
+                return Ok(historyUser);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error getting history user  {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "server error:");
+            }
+        }
+
+        //*********************************** endpoints para admin role ******************************************************
+        [Authorize(Roles = "admin")]
+        [HttpGet("gethistory/{userId}")]
+
+        public async Task<IActionResult> GetPurchaseHistoryByUserIdAdmin(int userId)
+        {
+            try
+            {
+
+                var historyUser = await _salesHistoryService.GetHistoryGetUserPurchaseHistory(userId);
 
                 return Ok(historyUser);
             }

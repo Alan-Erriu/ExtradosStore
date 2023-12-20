@@ -68,6 +68,11 @@ namespace ExtradosStore.API.Controllers
 
                 return Ok(userTokens);
             }
+            catch (UserNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("user not found");
+            }
             catch (IncorrectPasswordException ex)
             {
                 Console.WriteLine(ex.Message);

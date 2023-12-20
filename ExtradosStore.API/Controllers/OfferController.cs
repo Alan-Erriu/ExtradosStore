@@ -2,6 +2,7 @@
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ExtradosStore.API.Controllers
 {
@@ -26,7 +27,13 @@ namespace ExtradosStore.API.Controllers
 
             try
             {
-                var rowsAffected = await _offerService.CreateOfferService(createOfferRequest);
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+
+
+                int.TryParse(userIdClaim.Value, out int userId);
+                var rowsAffected = await _offerService.CreateOfferService(createOfferRequest, userId);
                 return Ok("offer created");
             }
             catch (Exception Ex)

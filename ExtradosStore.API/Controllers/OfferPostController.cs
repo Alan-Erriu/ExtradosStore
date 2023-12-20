@@ -97,6 +97,7 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error");
             }
         }
+        //*************************** solo para admin ***********************
         [HttpDelete("deleteall/{offerID}")]
         [Authorize(Roles = "admin")]
 

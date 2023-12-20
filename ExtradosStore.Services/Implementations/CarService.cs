@@ -73,8 +73,9 @@ namespace ExtradosStore.Services.Implementations
 
                 var quantityFromDB = await _carDAO.DataGetQuantityByPostAndUserId(postId, userId);
                 if (quantityFromDB == 0) throw new PostNotFoundException();
+                if (quantityFromDB == 1) return await _carDAO.DataDeleteCarItem(postId, userId);
+
                 quantityFromDB--;
-                if (quantityFromDB == 0) await _carDAO.DataDeleteCarItem(postId, userId);
 
                 return await _carDAO.DataUpdateQuantity(quantityFromDB, userId);
             }

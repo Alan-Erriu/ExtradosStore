@@ -1,5 +1,6 @@
 ﻿using ExtradosStore.Common.CustomExceptions.UserExceptions;
 using ExtradosStore.Data.DAOs.Interfaces;
+using ExtradosStore.Entities.DTOs.UserDTOs;
 using ExtradosStore.Services.Interfaces;
 
 namespace ExtradosStore.Services.Implementations
@@ -52,6 +53,39 @@ namespace ExtradosStore.Services.Implementations
             if (adminIdRole == user.user_roleid) throw new InvalidCastException("The user's role was already admin in the database");
             return await _userDAO.DataUpgradeRoleFromUserToAdmin(userId, adminIdRole);
 
+        }
+
+        public async Task<List<UserWithRolesNameDTO>> GetUsersService()
+        {
+            try
+            {
+                var listUsers = await _userDAO.DataGetAllUser();
+                var listRoles = await _roleDAO.DataGetRoles();
+
+                var result = (from user in listUsers
+                              join roles in listRoles on user.user_roleid equals roles.role_id
+
+                              select new UserWithRolesNameDTO
+                              {
+                                  id = user.user_id,
+                                  name = user.user_name,
+                                  lastname = user.user_lastname,
+                                  role = roles.role_name,
+                                  email = user.user_email,
+                                  phoneNumber = user.user_phone_number,
+                                  status = user.user_status,
+                                  createdAt = user.user_created_at,
+                                  dateOfBirth = user.user_date_of_birth
+
+                              }).ToList();
+
+                return result;
+            }
+            catch
+            {
+
+                throw;
+            }
         }
     }
 }

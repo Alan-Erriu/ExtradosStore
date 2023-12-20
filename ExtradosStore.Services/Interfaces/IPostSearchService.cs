@@ -10,5 +10,6 @@ namespace ExtradosStore.Services.Interfaces
         Task<List<PostWithOfferDTO>> GetAllPostActiveByOfferId(int offerId);
         Task<List<PostWithOfferDTO>> GetAllActivePostsWithNoOfferOrExpiredOffer();
         Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest);
+        Task<List<PostWithOfferDTO>> GetAllPostByUserId(int userId);
     }
 }

@@ -71,9 +71,9 @@ namespace ExtradosStore.API.Controllers
 
         }
         [Authorize(Roles = "admin,user")]
-        [HttpGet("getcar/{userId}")]
+        [HttpDelete("delete/{postId}")]
 
-        public async Task<IActionResult> GetCarByUserId(int userId)
+        public async Task<IActionResult> RemoveOneQuantityOrDeleteItemCar(int postId)
         {
             try
             {
@@ -82,7 +82,96 @@ namespace ExtradosStore.API.Controllers
                 if (userIdClaim == null) return StatusCode(401, "Unauthorized");
 
 
-                int.TryParse(userIdClaim.Value, out int userIdFromToke);
+                int.TryParse(userIdClaim.Value, out int userIdFromToken);
+
+                var rowsAffected = await _carService.RemoveOneQuantityOrDeleteItemCar(postId, userIdFromToken);
+
+
+                return Ok("succes");
+
+
+            }
+            catch (PostNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound("post not found in car");
+
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error deleting post to car  {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "server error:");
+            }
+        }
+        [Authorize(Roles = "admin,user")]
+        [HttpPost("buycar")]
+
+        public async Task<IActionResult> BuyCar()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+
+
+                int.TryParse(userIdClaim.Value, out int userIdFromToken);
+
+                var rowsAffected = await _carService.BuyCar(userIdFromToken);
+                return Ok("succes");
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Error buying car {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+        [Authorize(Roles = "admin,user")]
+        [HttpGet("getcar")]
+
+        public async Task<IActionResult> GetCarByUserId()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+
+
+                int.TryParse(userIdClaim.Value, out int userIdFromToken);
+                var carItems = await _carService.GetCarByUserId(userIdFromToken);
+
+
+                decimal totalCost = carItems.Sum(item => item.price * item.quantity);
+
+                CarResponse carResponse = new CarResponse
+                {
+                    post = carItems,
+                    total = totalCost
+                };
+
+                return Ok(carResponse);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error adding new post to car  {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "server error:");
+            }
+        }
+        //******************************* funciones de admin ********************************************//
+        [Authorize(Roles = "admin")]
+        [HttpGet("getcar/{userId}")]
+
+        public async Task<IActionResult> GetCarByUserIdAdmin(int userId)
+        {
+            try
+            {
+
+
+
                 var carItems = await _carService.GetCarByUserId(userId);
 
 
@@ -103,55 +192,6 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error:");
             }
         }
-        [Authorize(Roles = "admin,user")]
-        [HttpDelete("delete/{postId}")]
-
-        public async Task<IActionResult> RemoveOneQuantityOrDeleteItemCar(int postId)
-        {
-            try
-            {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
-
-
-                int.TryParse(userIdClaim.Value, out int userIdFromToken);
-
-                var rowsAffected = await _carService.RemoveOneQuantityOrDeleteItemCar(postId, userIdFromToken);
-
-                return Ok("succes");
-
-
-            }
-            catch (PostNotFoundException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return NotFound("post not found in car");
-
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine($"Error adding new post to car  {Ex.Message} {Ex.StackTrace}");
-
-                return StatusCode(500, "server error:");
-            }
-        }
-        [Authorize(Roles = "admin,user")]
-        [HttpPost("buycar/{userId}")]
-
-        public async Task<IActionResult> BuyCar(int userId)
-        {
-            try
-            {
-                var rowsAffected = await _carService.BuyCar(userId);
-                return Ok("succes");
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine($"Error buying car {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
-            }
-        }
     }
 }
+

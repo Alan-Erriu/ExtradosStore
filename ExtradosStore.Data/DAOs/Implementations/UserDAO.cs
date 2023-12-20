@@ -26,7 +26,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlUpdateRoleFromUserToAdmin = "UPDATE [user] SET user_roleid = @roleId WHERE user_id = @UserId";
 
-        private string _sqlSelecAllUser = "SELECT user_id,user_name,user_lastname, user_email, user_date_of_birth, user_roleid,user_status,user_created_at FROM [user]";
+        private string _sqlSelecAllUser = "SELECT user_id,user_name,user_lastname, user_email, user_date_of_birth, user_roleid,user_status,user_created_at,user_phone_number FROM [user]";
 
         public async Task<List<User>> DataGetAllUser()
         {

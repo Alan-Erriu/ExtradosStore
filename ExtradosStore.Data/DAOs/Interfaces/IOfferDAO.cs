@@ -5,7 +5,7 @@ namespace ExtradosStore.Data.DAOs.Interfaces
 {
     public interface IOfferDAO
     {
-        Task<int> DataCreateOffer(CreateOfferRequest offerRequest);
+        Task<int> DataCreateOffer(CreateOfferRequest offerRequest, int userId);
 
         Task<List<int>> GetOfferExpiratedData();
         Task<List<Offer>> GetAllOffer();

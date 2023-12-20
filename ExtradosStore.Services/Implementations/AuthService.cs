@@ -72,6 +72,7 @@ namespace ExtradosStore.Services.Implementations
             try
             {
                 var userInDB = await _atuthDAO.DataSignIn(loginRequest);
+                if (userInDB == null) throw new UserNotFoundException();
                 if (!_hasherService.VerifyPassword(loginRequest.user_password, userInDB.user_password_hash)) throw new IncorrectPasswordException();
                 if (!userInDB.user_status) throw new DisabledUserException();
                 var userClaims = new ClaimsTokenUserDTO { user_id = userInDB.user_id, user_name = userInDB.user_name, user_email = userInDB.user_email, user_roleid = userInDB.user_roleid };

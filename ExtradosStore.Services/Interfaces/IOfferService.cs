@@ -4,6 +4,6 @@ namespace ExtradosStore.Services.Interfaces
 {
     public interface IOfferService
     {
-        Task<int> CreateOfferService(CreateOfferRequest offerRequest);
+        Task<int> CreateOfferService(CreateOfferRequest offerRequest, int userId);
     }
 }

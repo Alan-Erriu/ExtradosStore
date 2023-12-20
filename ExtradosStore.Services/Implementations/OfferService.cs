@@ -15,11 +15,11 @@ namespace ExtradosStore.Services.Implementations
 
         }
 
-        public async Task<int> CreateOfferService(CreateOfferRequest offerRequest)
+        public async Task<int> CreateOfferService(CreateOfferRequest offerRequest, int userId)
         {
             try
             {
-                var rowsAffected = await _offerDAO.DataCreateOffer(offerRequest);
+                var rowsAffected = await _offerDAO.DataCreateOffer(offerRequest, userId);
                 return rowsAffected;
             }
             catch

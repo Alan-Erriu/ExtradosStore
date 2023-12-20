@@ -7,6 +7,7 @@
         public long offer_date_start { get; set; }
         public long offer_date_expiration { get; set; }
         public bool offer_status { get; set; }
+        public int offer_userId { get; set; }
 
     }
 }

@@ -15,6 +15,9 @@ namespace ExtradosStore.API.Controllers
             _postSearchService = postSearchService;
 
         }
+
+
+        // todos las publicaciones activas, sin ofertas.
         [HttpGet("getallactive")]
         [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> GetAllActivePostsWithNoOfferOrExpiredOffer()
@@ -32,6 +35,9 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error");
             }
         }
+
+
+        // todas las publicaciones activas con ofertas tambien activas.
         [HttpGet("getallactivewithoffer")]
         [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> GetAllPostActiveWithOffer()
@@ -49,6 +55,9 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error");
             }
         }
+
+
+        // todas las publicaciones activas ligadas a una oferta activa
         [HttpGet("getallActivebyofferid/{offerId}")]
         [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> GetAllPostActiveByOfferId(int offerId)
@@ -66,8 +75,11 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error");
             }
         }
+        //***************************************************  enpoints para admin  **************************************//
+
+        // filtro de busquedad por categoría, marca, y por nombre. No toma en cuenta ofertas.
         [HttpGet("searchpost")]
-        [Authorize(Roles = "admin, user")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> SearhPost(PostSearchRequest postSearchRequest)
         {
             try
@@ -81,7 +93,7 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error");
             }
         }
-        //***************************************************  enpoints para admin  **************************************//
+        //todas las publicaciones con ofertas vencidas y no vencidas
         [HttpGet("getallwithoffer")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllPostWithOffer()
@@ -91,6 +103,24 @@ namespace ExtradosStore.API.Controllers
 
                 var allPostActiveWithOffer = await _postSearchService.GetAllPostWithOfferService();
                 return Ok(allPostActiveWithOffer);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
+                return StatusCode(500, "server error");
+            }
+        }
+        //todas las publicaciones de un usuario, con y sin oferta.
+        [HttpGet("getallbyuser/{userId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetAllPostByUserId(int userId)
+        {
+            try
+            {
+
+                var allPost = await _postSearchService.GetAllPostByUserId(userId);
+                return Ok(allPost);
 
             }
             catch (Exception ex)

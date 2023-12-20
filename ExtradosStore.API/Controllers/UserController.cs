@@ -51,6 +51,26 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "server error:");
             }
         }
+        [HttpGet("getusers")]
+        [Authorize(Roles = "admin")]
+
+        public async Task<IActionResult> getUsersAdmin()
+        {
+            try
+            {
+
+                var listUser = await _userService.GetUsersService();
+
+
+                return Ok(listUser);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error{Ex.Message}");
+                Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
+                return StatusCode(500, "server error:");
+            }
+        }
 
         [HttpPut("enable/{userId}")]
         [Authorize(Roles = "admin")]

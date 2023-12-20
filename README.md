@@ -133,13 +133,14 @@ Este modelo contiene los datos del refresh token
 
 **Atributos**
 
-|  Nombre                 |  Tipo  |
-| :-----------------:     | :----: |
-|  offer_id               | int pk |
-|  offer_name             | string |
-|  offer_date_start       | long   |
-|  offer_date_expiration  | long   |
-|  offer_status           | bool   |
+|  Nombre                 |  Tipo          |
+| :-----------------:     | :----:         |
+|  offer_id               | int pk         |
+|  offer_name             | string         |
+|  offer_date_start       | long           |
+|  offer_date_expiration  | long           |
+|  offer_status           | bool           |
+|  offer_userId           | int(fk_user)   |
 
 ### 9. OfferPost
 
@@ -231,6 +232,7 @@ En el body de la request:
 |   Caso       | Status |             Respuesta             |
 | :-------:    | :----: | :--------------------------------:|
 |   Exito      |  200   |    { refresh y access token }     |
+|   NotFound   |  404   |    { user not found }             |
 | Unauthorized |  401   |     { "incorrect password" }      |
 | Unauthorized |  401   |    { "The user is disabled" }     |
 |   Fallo      |  500   |       { "Server error" }          |
@@ -371,6 +373,23 @@ Caso exitoso cambia el status del usuario a true
 |   Fallo      |  500   |   { "Server error" }                                 |
 
 Caso exitoso cambia el status del usuario a true
+
+
+
+#### 4 Obtener todos los usuarios (con el nombre de su rol y su status correspondiente)
+
+   ##### `Get /api/User/getusers`
+Solo el admind tiene acceso a este endpoint
+
+
+|   Caso       | Status |      Respuesta             |
+| :-------:    | :----: | :---------------------:    |
+|   Exito      |  200   |   { "lista de usuarios"  } | 
+|   Fallo      |  500   |   { "Server error" }       |
+
+Caso exitoso traer todos los usuarios
+
+
 
 
 #### 4 (Category)
@@ -692,3 +711,171 @@ Solo se puede agregar a las ofertas productos propios, no importa si es admin o 
 | Conflict     |  409   |{"This publication already belongs to an active offer"}|
 | BadRequest   |  400   |{"Only active posts can be added to offers"}           |
 |   Fallo      |  500   |   { "Server error" }                                  |
+
+#### 2 Desligar un post de una oferta
+
+
+  ##### `Delete /api/OfferPost/delete/(postId)`
+
+Si el rol es admin, puede borrar cualquier post de cualquier oferta.
+Si el rol es user , solo puede borrar sus publicaciones. Si un usuario intenta borrar el registro de otro usuario, recibira un 401
+
+
+
+|   Caso       | Status |      Respuesta             |
+| :-------:    | :----: | :---------------------:    |
+|   Exito      |  200   | {"offer created" }         |
+| Unauthorized |  401   |                            |
+| Notfound     |  404   |{"offer post not found"}    |
+|   Fallo      |  500   |   { "Server error" }       |
+
+#### 3 Desligar todas las publicaciones de una oferta
+
+
+  ##### `Delete /api/OfferPost/deleteall/(offerID)`
+
+Solo el admin puede acceder a este endpoint, desliga todas las publicaciones ligadas a una oferta.
+
+|   Caso       | Status |      Respuesta                    |
+| :-------:    | :----: | :---------------------:           |
+|   Exito      |  200   | {"All offer posts were deleted" } |
+|   Forbidden  |  403   |                                   |
+| Unauthorized |  401   |                                   |
+|   Fallo      |  500   |   { "Server error" }              |
+
+
+#### 10 (car)
+
+####
+
+
+#### 1 Agregar un producto al carrito de compras o aumentar el quantity en 1 a un producto que ya este en el carrito
+
+
+  ##### `Post /api/Car/addtocar`
+
+Agregar un producto, con status "active" y un stock mayor al quantity de la request body.
+No se le resta el stock al producto. Solo se consulta. El stock al producto se resta cuando se efectua la compra.
+Nadie puede comprar sus propias publicaciones
+
+  En el body de la request
+
+
+```json
+
+{
+    "post_id":8,
+    "quantity":2
+}
+
+````
+
+
+|   Caso       | Status |      Respuesta                     |
+| :-------:    | :----: | :---------------------:            |
+|   Exito      |  200   | {"offer created" }                 |
+| Unauthorized |  401   |                                    |
+| NotFound     |  404   |{"post not found"}                  |
+| NotFound     |  404   |{"post Status not found"}           |
+| Conflict     |  409   |{"stock is less than quantity"}     |
+| BadRequest   |  400   |{"a user cannot buy your posts"}    |
+|   Fallo      |  500   |   { "Server error" }               |
+
+
+#### 2 Borrar un producto o disminuir en uno el quantity
+
+
+  ##### `Post /api/Car/delete/(postId)`
+
+Se reduce en un el quantity de un post o se elimina al llegar a 0.
+
+
+|   Caso       | Status |      Respuesta                     |
+| :-------:    | :----: | :---------------------:            |
+|   Exito      |  200   | {"offer created" }                 |
+| Unauthorized |  401   |                                    |
+| NotFound     |  404   |{"post not found"}                  |
+|   Fallo      |  500   |   { "Server error" }               |
+
+
+#### 3 Obtener el carrito del usuario logeado.
+
+
+  ##### `Get /api/Car/getcar`
+
+Se obtienen todos los post que el usuario agrego a su carrito, y ademas El costo total que saldría comprar ese carrito.
+Teniendo en cuenta ofertas y cantidades de cada producto
+
+
+|   Caso       | Status |      Respuesta                     |
+| :-------:    | :----: | :---------------------:            |
+|   Exito      |  200   | {"lista de post y costo total" }   |
+| Unauthorized |  401   |                                    |
+|   Fallo      |  500   |   { "Server error" }               |
+
+#### 4 Comprar el carrito del usuario logeado.
+
+
+  ##### `Post /api/Car/buycar`
+
+Se crean registros en la tabla sales y salesDetails. Equivalentes a los post que estaban en la tabla car.
+Luego de esto se borran todos los registros del carrito. Para actualizarlo.
+
+
+|   Caso       | Status |      Respuesta                     |
+| :-------:    | :----: | :---------------------:            |
+|   Exito      |  200   | {"success" }                       |
+| Unauthorized |  401   |                                    |
+|   Fallo      |  500   |   { "Server error" }               |
+
+
+#### 5 Obtener el carrito de cualquier usuario.
+
+
+  ##### `Get /api/Car/getcar/(userId)`
+
+se obtiene todos los post que el usuario almance en su carrito. Solo el admin tiene acceso a este enpoint
+
+
+|   Caso       | Status |      Respuesta                     |
+| :-------:    | :----: | :---------------------:            |
+|   Exito      |  200   | {"lista de post y costo total" }   |
+| Unauthorized |  401   |                                    |
+|   Fallo      |  500   |   { "Server error" }               |
+
+
+#### 11 (PurchaseHistory)
+
+####
+
+
+#### 1 Obtener el registro de cada compra que realizo el usuario, con su fecha y costo.
+
+
+  ##### `Get /api/PurchaseHistory/gethistory`
+
+Se obtiene un registro de cada producto que compro, con una fecha (epoch).
+Se informa precio y cantidad
+El descuento ya esta integrado al precio fina.
+
+
+
+|   Caso       | Status |      Respuesta                     |
+| :-------:    | :----: | :---------------------:            |
+|   Exito      |  200   | {"lista de compras" }              |
+| Unauthorized |  401   |                                    |
+|   Fallo      |  500   |   { "Server error" }               |
+
+
+#### 2 Obtener el registro de cada compra que realizo el usuario, con su fecha y costo.
+
+
+  ##### `Get /api/PurchaseHistory/gethistory/(userId)`
+
+Solo el admin tiene acceso a este endpoint, se puede obtener el registro de compras de cualquier usuario.
+
+|   Caso       | Status |      Respuesta                     |
+| :-------:    | :----: | :---------------------:            |
+|   Exito      |  200   | {"lista de compras" }              |
+| Unauthorized |  401   |                                    |
+|   Fallo      |  500   |   { "Server error" }               |

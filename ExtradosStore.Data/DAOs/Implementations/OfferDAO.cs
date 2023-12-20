@@ -17,14 +17,14 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         }
 
-        private string _sqlInsertNewOffer = @"INSERT  INTO [offer]( offer_name, offer_date_start,offer_date_expiration) VALUES
-                                              (@OfferName, @OfferDateStart, @OfferDateExpiration)";
+        private string _sqlInsertNewOffer = @"INSERT  INTO [offer]( offer_name, offer_date_start,offer_date_expiration, offer_userId) VALUES
+                                              (@OfferName, @OfferDateStart, @OfferDateExpiration,@UserId)";
         private string _sqlSelectOfferExpirated = "SELECT offer_id FROM [offer] where offer_date_expiration > @DateTimeNow";
 
         private string _sqlSelectExpirationDateByOfferId = @"SELECT offer_date_expiration FROM [offer] WHERE offer_id =@OfferID";
 
         private string _sqlSelectAllOffer = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration FROM [offer] ";
-        public async Task<int> DataCreateOffer(CreateOfferRequest offerRequest)
+        public async Task<int> DataCreateOffer(CreateOfferRequest offerRequest, int userId)
         {
             DateTimeOffset offerExpirationDate = offerRequest.offer_date_expiration.Date.Add(new TimeSpan(12, 0, 0));
             try
@@ -37,6 +37,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
                         OfferName = offerRequest.offer_name,
                         OfferDateStart = new DateTimeOffset(offerRequest.offer_date_start).ToUnixTimeMilliseconds(),
                         OfferDateExpiration = offerExpirationDate.ToUnixTimeMilliseconds(),
+                        UserId = userId
                     };
 
 
