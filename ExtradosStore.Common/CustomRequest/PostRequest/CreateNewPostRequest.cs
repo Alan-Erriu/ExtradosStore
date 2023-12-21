@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ExtradosStore.Common.CustomValidationAtributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace ExtradosStore.Common.CustomRequest.PostRequest
 {
@@ -12,10 +13,10 @@ namespace ExtradosStore.Common.CustomRequest.PostRequest
         public string post_description { get; set; }
         [Required]
         public decimal post_price { get; set; }
-        [Required]
+        [Range(1, byte.MaxValue, ErrorMessage = "Stock must be greater than 0.")]
         public byte post_stock { get; set; }
-        //[Required]
-        public byte[] post_img { get; set; }
+        [Base64Image(ErrorMessage = "The string is not a valid Base64 representation")]
+        public string post_img { get; set; }
         [Required]
         public int brand_id { get; set; }
         [Required]

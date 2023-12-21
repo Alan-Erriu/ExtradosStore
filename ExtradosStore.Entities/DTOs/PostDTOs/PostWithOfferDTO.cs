@@ -9,7 +9,7 @@
         public decimal post_price { get; set; }
         public int offer_post_discount { get; set; }
         public decimal priceNow { get; set; }
-        public byte[] img { get; set; }
+        public string img { get; set; }
         public string offer_name { get; set; }
         public string offer_status { get; set; }
         public string category_name { get; set; }

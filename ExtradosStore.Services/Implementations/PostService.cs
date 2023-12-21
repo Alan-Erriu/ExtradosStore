@@ -45,8 +45,8 @@ namespace ExtradosStore.Services.Implementations
 
                 var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
                 if (statusActiveId == 0) throw new PostStatusNotFoundException();
-
                 postRequest.post_status_id = statusActiveId;
+
 
 
                 return await _postDao.DataCreateNewPost(postRequest);
