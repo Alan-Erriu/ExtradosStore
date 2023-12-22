@@ -39,7 +39,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error creating a new category:  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
 
         }
@@ -71,14 +71,14 @@ namespace ExtradosStore.API.Controllers
                 }
                 else
                 {
-                    return StatusCode(500, "Server error");
+                    return StatusCode(500, "Something went wrong. Please contact support.");
                 }
             }
             catch (Exception Ex)
             {
                 Console.WriteLine($"Error deleting  category:  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
 
         }
@@ -98,7 +98,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error gettings  categorys:  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
 
         }

@@ -32,7 +32,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 
@@ -52,7 +52,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 
@@ -72,7 +72,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         //***************************************************  enpoints para admin  **************************************//
@@ -90,7 +90,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         //todas las publicaciones con ofertas vencidas y no vencidas
@@ -108,7 +108,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         //todas las publicaciones de un usuario, con y sin oferta.
@@ -126,8 +126,9 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
+
     }
 }

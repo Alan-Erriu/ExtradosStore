@@ -35,7 +35,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error{Ex.Message}");
                 Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         [Authorize(Roles = "admin")]
@@ -52,7 +52,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error:{Ex.Message}");
                 Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
     }

@@ -46,7 +46,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error creating a new post: {ex.Message}\n{ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong.Please contact support.");
             }
         }
         [HttpPut("statuspaused/{postId}")]
@@ -83,7 +83,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"error when modifying the status of the publication: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         [HttpPut("statuscancelled/{postId}")]
@@ -120,7 +120,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"error when modifying the status of the publication: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         [HttpPut("statusactive/{postId}/{stock}")]
@@ -157,7 +157,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"error when modifying the status of the publication: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 
@@ -199,7 +199,7 @@ namespace ExtradosStore.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"error when modifying the publication: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 

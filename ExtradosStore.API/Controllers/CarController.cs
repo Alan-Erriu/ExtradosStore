@@ -66,7 +66,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error adding new post to car  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
 
         }
@@ -101,7 +101,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error deleting post to car  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         [Authorize(Roles = "admin,user")]
@@ -125,7 +125,7 @@ namespace ExtradosStore.API.Controllers
             {
 
                 Console.WriteLine($"Error buying car {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         [Authorize(Roles = "admin,user")]
@@ -158,7 +158,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error adding new post to car  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         //******************************* funciones de admin ********************************************//
@@ -189,7 +189,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error adding new post to car  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
     }

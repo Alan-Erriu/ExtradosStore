@@ -40,7 +40,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error creating a new offer:  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
 
         }

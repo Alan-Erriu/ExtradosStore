@@ -48,7 +48,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error{Ex.Message}");
                 Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         [HttpGet("getusers")]
@@ -68,7 +68,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error{Ex.Message}");
                 Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 
@@ -81,7 +81,7 @@ namespace ExtradosStore.API.Controllers
             {
 
                 var rowsAffected = await _userService.EnableUserService(userId);
-                if (rowsAffected == 0) return StatusCode(500, "server error");
+
                 return Ok("now user is enable");
             }
             catch (UserNotFoundException ex)
@@ -98,7 +98,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error{Ex.Message}");
                 Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 
@@ -111,7 +111,7 @@ namespace ExtradosStore.API.Controllers
             {
 
                 var rowsAffected = await _userService.UpgradeRoleFromUserToAdminService(userId);
-                if (rowsAffected == 0) return StatusCode(500, "server error");
+
                 return Ok("now user is admin");
             }
             catch (UserNotFoundException ex)
@@ -133,7 +133,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error{Ex.Message}");
                 Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 

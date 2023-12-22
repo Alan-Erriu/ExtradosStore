@@ -37,7 +37,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error getting history user  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 
@@ -58,7 +58,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error getting history user  {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
 

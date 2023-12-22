@@ -58,7 +58,7 @@ namespace ExtradosStore.API.Controllers
 
                 Console.WriteLine($"error:  {ex}");
                 Console.WriteLine($"stack trace: {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         [HttpDelete("delete/{postId}")]
@@ -94,7 +94,7 @@ namespace ExtradosStore.API.Controllers
 
                 Console.WriteLine($"error:  {ex}");
                 Console.WriteLine($"stack trace: {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
         //*************************** solo para admin ***********************
@@ -117,7 +117,7 @@ namespace ExtradosStore.API.Controllers
 
                 Console.WriteLine($"error:  {ex}");
                 Console.WriteLine($"stack trace: {ex.StackTrace}");
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
     }

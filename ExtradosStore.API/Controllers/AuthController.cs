@@ -51,7 +51,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error register a new user {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error:");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
 
 
@@ -87,7 +87,7 @@ namespace ExtradosStore.API.Controllers
             {
                 Console.WriteLine($"Error register a new user {Ex.Message} {Ex.StackTrace}");
 
-                return StatusCode(500, "server error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
 
 
@@ -111,25 +111,25 @@ namespace ExtradosStore.API.Controllers
             catch (SecurityTokenException ex)
             {
                 Console.WriteLine(ex.Message);
-                return Unauthorized("invalid token");
+                return Unauthorized();
             }
             //refresh token distinto al de la db
             catch (InvalidRefreshTokenException ex)
             {
                 Console.WriteLine(ex.Message);
-                return Unauthorized("invalid refresh token");
+                return Unauthorized();
             }
             //refresh token caducado en db
             catch (ExpiredRefreshTokenException ex)
             {
                 Console.WriteLine(ex.Message);
-                return Unauthorized("refresh token expired");
+                return Unauthorized();
             }
             //falta algun claim en el access token
             catch (MissingClaimsException ex)
             {
                 Console.WriteLine(ex.Message);
-                return Unauthorized("invalid access token");
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -138,11 +138,11 @@ namespace ExtradosStore.API.Controllers
                 if (ex.Message.Contains("IDX12723"))
                 {
                     Console.WriteLine(ex.Message);
-                    return Unauthorized("Invalid access token format");
+                    return Unauthorized();
                 }
 
                 Console.WriteLine($"Error: {ex.Message}");
-                return StatusCode(500, "Internal Server Error");
+                return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
     }
