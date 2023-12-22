@@ -6,7 +6,10 @@
 
 ## Introducci�n
 
-**Extrados Store** es una API De ecommerce donde los usuarios pueden registrarse, vender sus productos o comprar productos publicados por otros usuarios.
+**Extrados Store** es una API tipo marketplace donde los usuarios pueden registrarse y vender sus productos.
+Puede crear grupos de ofertas por un tiempo limite.
+Pueden comprar productos de otro usuario.
+Tambien contiene varias funcionalidades para los administradores.
 
 
 
@@ -22,25 +25,26 @@ En esta capa se encuentran las configuraciones del proyecto, incluyendo informac
 
 La capa common es el lugar donde se almacena cosas que podemos requerir en cualquier lugar del proyecto  Aquí se incluyen:
 
-- Custom Exceptions: Manejo de excepciones personalizadas.
-- Request: Definición de las estructuras de las solicitudes HTTP y sus validaciones.
-- Otros elementos compartidos necesarios en múltiples capas.
+- Custom Exceptions: excepciones personalizadas.
+- Request:  modelos de las request y sus validaciones.
+- Otros cualquier cosa que no pertenezca a otra capa y sea necesaria en la aplicacion.
 
 #### Capa Entities
 
-En esta capa, se definen los modelos y DTOs. Aquí se encuentran las representaciones de los datos y los objetos de transferencia de datos utilizados en todo el proyecto.
-
-#### Capa Services
-
-La capa Services contiene la lógica de negocio de la aplicación. Aquí se implementan los servicios que son consumidos por la capa API.
-
-#### Capa API
-
-La capa API actúa como interfaz de usuario y consume los servicios proporcionados por la capa Services. Aquí se gestionan las solicitudes HTTP, la autenticación con JWT, y la interacción con los servicios.
+En esta capa, estan los modelos y DTOs de todo el pryecto
 
 #### Capa DAOs
 
-La capa DAOs  se encarga de la interacción directa con la base de datos. Aquí se implementan las operaciones CRUD y se gestionan las consultas a la base de datos.
+La capa DAOs  se encarga de la interacción directa con la base de datos. Aca se implementan las operaciones CRUD y se gestionan las consultas a la base de datos.
+
+#### Capa Services
+
+La capa Services consume a daos y maneja toda la logica centrar de la aplicacion.
+
+#### Capa API
+
+La capa API consume a services y contiene controladores, midlewares etc...
+
 
 
 
