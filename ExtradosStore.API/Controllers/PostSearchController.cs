@@ -20,9 +20,9 @@ namespace ExtradosStore.API.Controllers
 
 
 
-        // filtro de busquedad por categoría, marca, y por nombre. No toma en cuenta ofertas.
+        // filtro de busquedad por categoría, marca, y  nombre. Toma en cuenta ofertas y aplica descuentos
         [HttpGet("searchpost")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> SearhPost(PostSearchRequest postSearchRequest)
         {
             try
@@ -36,10 +36,10 @@ namespace ExtradosStore.API.Controllers
                 return StatusCode(500, "Something went wrong. Please contact support.");
             }
         }
-        //todas las publicaciones con ofertas vencidas y no vencidas
+        //todas las publicaciones con o sin oferta, con estado "active"
         [HttpGet("getallwithoffer")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> GetAllPostWithOffer()
+        [Authorize(Roles = "admin,user")]
+        public async Task<IActionResult> GetAllPostActive()
         {
             try
             {

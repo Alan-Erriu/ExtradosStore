@@ -12,6 +12,7 @@
         {
             get
             {
+                if (!offer_status) return post_price;
                 return post_price - (post_price * offer_post_discount / 100);
             }
         }
@@ -23,7 +24,7 @@
             get
             {
 
-                return offer_date_expiration < DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                return offer_date_expiration > DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() ? true : false;
             }
         }
         public string category_name { get; set; }

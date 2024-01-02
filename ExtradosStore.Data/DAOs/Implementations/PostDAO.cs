@@ -37,7 +37,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _selectPostNamePriceAndImgByPostId = @"Select post_name,post_price, post_img from [post] where post_id = @PostId";
 
-        private string _selectAllPostActiveWithOffer = @"SELECT 
+        private string _selectAllPostActive = @"SELECT 
         p.post_id,
         p.post_name,
         u.user_name,
@@ -46,24 +46,26 @@ namespace ExtradosStore.Data.DAOs.Implementations
         op.offer_post_discount,
         p.post_img,
         o.offer_name,
-        o.offer_status,
         c.category_name,
-        b.brand_name
+        b.brand_name,
+        o.offer_date_expiration
 
 FROM 
     [post] p
 JOIN 
      [user] u on p.post_userId = u.user_id
-JOIN 
-    [offer_post] op on op.offer_post_offerId = p.post_id
-JOIN
+LEFT JOIN 
+    [offer_post] op on op.offer_post_postId = p.post_id
+LEFT JOIN
     [offer] o on op.offer_post_offerId = o.offer_id
 JOIN
     [category] c on p.post_categoryId = c.category_id
 JOIN
     [brand] b on b.brand_id = p.post_brandId
 
+where post_status_id = @StatusId
 ";
+
 
 
 
@@ -268,17 +270,21 @@ JOIN
         }
 
 
-        public async Task<List<PostWithOfferDTO>> GetAllPostActiveWithOffer()
+        public async Task<List<PostWithOfferDTO>> GetAllPostActiveWithOffer(int statusActiveId)
         {
             using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                var allPostActivedWithOffer = (await connection.QueryAsync<PostWithOfferDTO>(_selectAllPostActiveWithOffer)).ToList();
+                var parameters = new { StatusId = statusActiveId };
+                var allPostActivedWithOffer = (await connection.QueryAsync<PostWithOfferDTO>(_selectAllPostActive, parameters)).ToList();
                 return allPostActivedWithOffer;
             }
         }
-        public async Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest)
+
+
+        public async Task<List<PostWithOfferDTO>> SearchPostActive(PostSearchRequest postSearchRequest, int statusActiveId)
         {
-            var sqlBuilder = new StringBuilder("SELECT * FROM [post] WHERE post_status_id = 1");
+
+            var sqlBuilder = new StringBuilder(_selectAllPostActive);
 
             var dynamicParameters = new DynamicParameters();
 
@@ -299,7 +305,7 @@ JOIN
                 sqlBuilder.Append(" AND post_name LIKE @PostName");
                 dynamicParameters.Add("PostName", $"%{postSearchRequest.postName}%");
             }
-
+            dynamicParameters.Add("StatusId", statusActiveId);
             using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
                 var listPost = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();

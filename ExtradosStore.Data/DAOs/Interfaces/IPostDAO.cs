@@ -14,10 +14,10 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<int> DataUpdateStockAndSetStatusActive(int postId, int statusId, int newStock);
         Task<int> DataUpdatePost(UpdatePostRequest updateRequest);
         Task<int> DataGetStatusIdByPostId(int postId);
-        Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest);
+        Task<List<PostWithOfferDTO>> SearchPostActive(PostSearchRequest postSearchRequest, int statusActiveId);
         Task<StockAndStatusDTO> DataGetStatusAndStockByPostId(int postId);
         Task<PostPriceImgAndName> DataGetPostPriceNameAndImgById(int postId);
-        Task<List<PostWithOfferDTO>> GetAllPostActiveWithOffer();
+        Task<List<PostWithOfferDTO>> GetAllPostActiveWithOffer(int statusActiveId);
 
 
     }

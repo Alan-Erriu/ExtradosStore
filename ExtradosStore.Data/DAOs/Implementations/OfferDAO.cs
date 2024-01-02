@@ -23,12 +23,12 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlSelectExpirationDateByOfferId = @"SELECT offer_date_expiration FROM [offer] WHERE offer_id =@OfferID";
 
-        private string _sqlSelectAllOfferActive = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration FROM [offer] where offer_date_expiration > @DateNow ";
+        private string _sqlSelectAllOfferActive = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration, offer_userId FROM [offer] where offer_date_expiration > @DateNow ";
 
-        private string _sqlSelectAllOffer = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration FROM [offer]";
+        private string _sqlSelectAllOffer = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration,offer_userId FROM [offer]";
         public async Task<int> DataCreateOffer(CreateOfferRequest offerRequest, int userId)
         {
-            DateTimeOffset offerExpirationDate = offerRequest.offer_date_expiration.Date.Add(new TimeSpan(12, 0, 0));
+            DateTimeOffset offerExpirationDate = offerRequest.offer_date_expiration.Date;
             try
             {
 

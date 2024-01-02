@@ -9,24 +9,17 @@ namespace ExtradosStore.Services.Implementations
     {
 
         private readonly IPostDAO _postDao;
-        private readonly IBrandDAO _brandDao;
-        private readonly ICategoryDAO _categoryDao;
+
         private readonly IPostStatusDAO _postStatusDAO;
-        private readonly IOfferDAO _offerDao;
-        private readonly IOfferPostDAO _offerPostDao;
-        private readonly IUserDAO _userDao;
 
 
-        public PostSearchService(IPostDAO postDAO, IBrandDAO brandDAO, ICategoryDAO categoryDAO,
-            IPostStatusDAO postStatusDAO, IOfferDAO offerDao, IOfferPostDAO offerPostDao, IUserDAO userDao)
+
+        public PostSearchService(IPostDAO postDAO, IPostStatusDAO postStatusDAO)
         {
             _postDao = postDAO;
-            _brandDao = brandDAO;
-            _categoryDao = categoryDAO;
+
             _postStatusDAO = postStatusDAO;
-            _offerDao = offerDao;
-            _offerPostDao = offerPostDao;
-            _userDao = userDao;
+
         }
 
 
@@ -36,8 +29,8 @@ namespace ExtradosStore.Services.Implementations
         {
             try
             {
-                var listPostFromDB = await _postDao.GetAllPostActiveWithOffer();
-
+                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+                var listPostFromDB = await _postDao.GetAllPostActiveWithOffer(statusActiveId);
                 return listPostFromDB;
 
             }
@@ -52,7 +45,8 @@ namespace ExtradosStore.Services.Implementations
         {
             try
             {
-                return await _postDao.SearchPost(postSearchRequest);
+                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+                return await _postDao.SearchPostActive(postSearchRequest, statusActiveId);
             }
             catch
             {
