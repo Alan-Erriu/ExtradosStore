@@ -44,6 +44,47 @@ namespace ExtradosStore.API.Controllers
             }
 
         }
+        [HttpGet("getallactive")]
+        [Authorize(Roles = "admin,user")]
+
+        public async Task<IActionResult> GetAllOfferActive()
+        {
+
+            try
+            {
+
+                var rowsAffected = await _offerService.GetAllOfferActive();
+                return Ok(rowsAffected);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error getting  offers:  {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "Something went wrong. Please contact support.");
+            }
+
+        }
+
+        [HttpGet("getall")]
+        [Authorize(Roles = "admin")]
+
+        public async Task<IActionResult> GetAllOffer()
+        {
+
+            try
+            {
+
+                var rowsAffected = await _offerService.GetAllOffer();
+                return Ok(rowsAffected);
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine($"Error getting  offers:  {Ex.Message} {Ex.StackTrace}");
+
+                return StatusCode(500, "Something went wrong. Please contact support.");
+            }
+
+        }
 
 
     }

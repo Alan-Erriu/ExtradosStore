@@ -17,6 +17,7 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest);
         Task<StockAndStatusDTO> DataGetStatusAndStockByPostId(int postId);
         Task<PostPriceImgAndName> DataGetPostPriceNameAndImgById(int postId);
+        Task<List<PostWithOfferDTO>> GetAllPostActiveWithOffer();
 
 
     }

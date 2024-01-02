@@ -8,6 +8,7 @@ namespace ExtradosStore.Data.DAOs.Interfaces
         Task<int> DataCreateOffer(CreateOfferRequest offerRequest, int userId);
 
         Task<List<int>> GetOfferExpiratedData();
+        Task<List<Offer>> GetAllOfferActive();
         Task<List<Offer>> GetAllOffer();
         Task<long> DataGetExpirationDateByOfferId(int offerID);
     }

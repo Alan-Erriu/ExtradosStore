@@ -1,5 +1,6 @@
 ﻿using ExtradosStore.Common.CustomRequest.OfferRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
+using ExtradosStore.Entities.Models;
 using ExtradosStore.Services.Interfaces;
 
 namespace ExtradosStore.Services.Implementations
@@ -20,6 +21,34 @@ namespace ExtradosStore.Services.Implementations
             try
             {
                 var rowsAffected = await _offerDAO.DataCreateOffer(offerRequest, userId);
+                return rowsAffected;
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<Offer>> GetAllOfferActive()
+        {
+            try
+            {
+                var rowsAffected = await _offerDAO.GetAllOfferActive();
+                return rowsAffected;
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<Offer>> GetAllOffer()
+        {
+            try
+            {
+                var rowsAffected = await _offerDAO.GetAllOffer();
                 return rowsAffected;
             }
             catch

@@ -8,10 +8,24 @@
         public string post_description { get; set; }
         public decimal post_price { get; set; }
         public int offer_post_discount { get; set; }
-        public decimal priceNow { get; set; }
-        public string img { get; set; }
+        public decimal priceNow
+        {
+            get
+            {
+                return post_price - (post_price * offer_post_discount / 100);
+            }
+        }
+        public string post_img { get; set; }
         public string offer_name { get; set; }
-        public string offer_status { get; set; }
+        public long offer_date_expiration { get; set; }
+        public bool offer_status
+        {
+            get
+            {
+
+                return offer_date_expiration < DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            }
+        }
         public string category_name { get; set; }
         public string brand_name { get; set; }
 

@@ -31,14 +31,39 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlUpdateStockPost = @"UPDATE [post] SET post_stock = @Stock, post_status_id = @StatusId WHERE post_id = @PostId";
 
-
         private string _sqlSelecPostStatusByPostId = @"select post_status_id From [post] where post_id = @PostId";
 
         private string _selectStatusAndStockByPostID = "SELECT post_userId,post_stock, post_status_id FROM [post] WHERE post_id = @PostId";
 
         private string _selectPostNamePriceAndImgByPostId = @"Select post_name,post_price, post_img from [post] where post_id = @PostId";
 
+        private string _selectAllPostActiveWithOffer = @"SELECT 
+        p.post_id,
+        p.post_name,
+        u.user_name,
+        p.post_description,
+        p.post_price,
+        op.offer_post_discount,
+        p.post_img,
+        o.offer_name,
+        o.offer_status,
+        c.category_name,
+        b.brand_name
 
+FROM 
+    [post] p
+JOIN 
+     [user] u on p.post_userId = u.user_id
+JOIN 
+    [offer_post] op on op.offer_post_offerId = p.post_id
+JOIN
+    [offer] o on op.offer_post_offerId = o.offer_id
+JOIN
+    [category] c on p.post_categoryId = c.category_id
+JOIN
+    [brand] b on b.brand_id = p.post_brandId
+
+";
 
 
 
@@ -243,6 +268,14 @@ namespace ExtradosStore.Data.DAOs.Implementations
         }
 
 
+        public async Task<List<PostWithOfferDTO>> GetAllPostActiveWithOffer()
+        {
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var allPostActivedWithOffer = (await connection.QueryAsync<PostWithOfferDTO>(_selectAllPostActiveWithOffer)).ToList();
+                return allPostActivedWithOffer;
+            }
+        }
         public async Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest)
         {
             var sqlBuilder = new StringBuilder("SELECT * FROM [post] WHERE post_status_id = 1");
