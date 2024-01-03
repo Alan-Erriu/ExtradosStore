@@ -12,21 +12,17 @@ namespace ExtradosStore.Services.Implementations
         private readonly IBrandDAO _brandDao;
         private readonly ICategoryDAO _categoryDao;
         private readonly IPostStatusDAO _postStatusDAO;
-        private readonly IOfferDAO _offerDao;
-        private readonly IOfferPostDAO _offerPostDao;
-        private readonly IUserDAO _userDao;
+
 
 
         public PostService(IPostDAO postDAO, IBrandDAO brandDAO, ICategoryDAO categoryDAO,
-            IPostStatusDAO postStatusDAO, IOfferDAO offerDao, IOfferPostDAO offerPostDao, IUserDAO userDao)
+            IPostStatusDAO postStatusDAO)
         {
             _postDao = postDAO;
             _brandDao = brandDAO;
             _categoryDao = categoryDAO;
             _postStatusDAO = postStatusDAO;
-            _offerDao = offerDao;
-            _offerPostDao = offerPostDao;
-            _userDao = userDao;
+
         }
 
 

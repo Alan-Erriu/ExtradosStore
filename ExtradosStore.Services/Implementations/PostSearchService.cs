@@ -25,12 +25,27 @@ namespace ExtradosStore.Services.Implementations
 
 
 
-        public async Task<List<PostWithOfferDTO>> GetAllPostWithOfferService()
+        public async Task<List<PostWithOfferDTO>> GetAllPostService()
         {
             try
             {
                 var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
-                var listPostFromDB = await _postDao.GetAllPostActiveWithOffer(statusActiveId);
+                var listPostFromDB = await _postDao.GetAllPostActive(statusActiveId);
+                return listPostFromDB;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public async Task<List<PostWithOfferDTO>> GetAllPostWithOffer()
+        {
+            try
+            {
+                var currentTimeEpoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+                var listPostFromDB = await _postDao.GetAllPostActiveWithOffer(statusActiveId, currentTimeEpoch);
                 return listPostFromDB;
 
             }
@@ -47,6 +62,34 @@ namespace ExtradosStore.Services.Implementations
             {
                 var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
                 return await _postDao.SearchPostActive(postSearchRequest, statusActiveId);
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<PostWithOfferDTO> GetPostByPostId(int postId)
+        {
+            try
+            {
+                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+                return await _postDao.DataGetPostByPostId(postId, statusActiveId);
+            }
+            catch
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<PostDTO>> GetAllPostByUserId(int userId)
+        {
+            try
+            {
+
+                return await _postDao.DataAllPostByUserId(userId);
             }
             catch
             {

@@ -737,6 +737,38 @@ Todas las fechas de la aplicacion se pasan a utc y en milisegundos en la db (epo
 | Unauthorized |  401   |                                                  |
 |   Fallo      |  500   |{ "Something went wrong. Please contact support" }|
 
+
+#### 2 Obtener todas las ofertas vigentes.
+
+
+  ##### `Get /api/Offer/getallactive`
+
+Se obtiene un listado de ofertas activas con el detalle de creador de oferta, fecha de inicio y fin
+
+
+|   Caso       | Status |      Respuesta                                   |
+| :-------:    | :----: | :---------------------:                          |
+|   Exito      |  200   | {"lista de ofertas activas" }                    |
+| Unauthorized |  401   |                                                  |
+|   Fallo      |  500   |{ "Something went wrong. Please contact support" }|
+
+
+#### 3 Obtener todas las ofertas vigentes y vencidas.
+
+
+  ##### `Get /api/Offer/getall`
+
+Se obtiene un listado de ofertas vigentes y no vigentes. Enpoint solo para el admin.
+
+
+|   Caso       | Status |      Respuesta                                   |
+| :-------:    | :----: | :---------------------:                          |
+|   Exito      |  200   | {"lista de ofertas" }                            |
+|   Forbidden  |  403   |                                                  |
+| Unauthorized |  401   |                                                  |
+|   Fallo      |  500   |{ "Something went wrong. Please contact support" }|
+
+
 #### 9 (OfferPost)
 
 ####
@@ -944,14 +976,14 @@ Solo el admin tiene acceso a este endpoint, se puede obtener el registro de comp
 #### 11 (PostSearch)
 
 Este controlador contiene todos los endpoinst para buscar publicaciones, ya sea con o sin ofertas, con estado activo, pausado o cancelado.
-Tiene un buscador para el admin, que permite ver todos los productos y filtrarlos por marca y categoría.
+Tiene un buscador, que permite ver todos los productos filtrados por nombre, marca y categoría.
 ####
 
 
-#### 1 Obtener todos las publicaciones activas, sin ofertas o con su oferta vencida.
+#### 1 Obtener todos las publicaciones activas.
+Si la publicacion tiene una oferta activa el status viene en true y el atributo "priceNow" trae el precio con el descuento aplicado.
 
-
-  ##### `Get /api/PostSearch/getallactive`
+  ##### `Get /api/PostSearch/getall`
 
 
 
@@ -965,10 +997,10 @@ Tiene un buscador para el admin, que permite ver todos los productos y filtrarlo
 
 
 
-#### 2 Obtener todas las publicaciones activas con ofertas tambien activas.
+#### 2 Obtener todas las publicaciones activas con ofertas tambien activas. 
+Solo busca publicaciones con ofertas vigentes
 
-
-  ##### `Get /api/PostSearch/getallactivewithoffer`
+  ##### `Get /api/PostSearch/getallwithoffer`
 
 
 
@@ -998,22 +1030,6 @@ Tiene un buscador para el admin, que permite ver todos los productos y filtrarlo
 |   Fallo      |  500   |{ "Something went wrong. Please contact support" }|
 
 
-#### 4 Obtener todas las publicaciones con ofertas vencidas y no vencidas
-
-Este endpoint es solo para el admin, trae todas las publicaciones con ofertas, oferta vencidas o en vigencia.
-
-  ##### `Get /api/PostSearch/getallwithoffer`
-
-
-|   Caso       | Status |      Respuesta                                   |
-| :-------:    | :----: | :---------------------:                          |
-|   Exito      |  200   | {"lista publicaciones con ofertas vencida o no"} |
-|   Forbidden  |  403   |                                                     |
-| Unauthorized |  401   |                                                  |
-|   Fallo      |  500   |{ "Something went wrong. Please contact support" }|
-
-
-
 #### 5 Obtener todas las publicaciones de un usuario, con y sin oferta.
 
 Este endpoint es solo para el admin, trae todas las publicaciones (De cualquier usuario) con ofertas, vencidas o en vigencia.
@@ -1030,14 +1046,11 @@ No importa el status de la publicacion, pausado, cancelado o activo. Ademas trae
 | Unauthorized |  401   |                                                  |
 |   Fallo      |  500   |{ "Something went wrong. Please contact support" }|
 
-#### 6  filtro de busquedad por categoría, marca, y por nombre. No toma en cuenta ofertas (post con status active).
+#### 6  filtro de busquedad por categoría, marca, y por nombre. (post con status active).
 
-(ESTE ENDPOINT ESTA A MODO DE PRUEBA, HAY QUE MODIFICARLO)
+Se obtiene un listado de publicaciones segun los filtros ingresados. Ningun filtro es obligatorio. Si la publicacion tiene una oferta activa, se aplica el descuento.
 
-Este endpoint es solo para el admin, filtra productos por un id de categoría, por un id de marca y por nombre.
-Es decir busca publicaciones que contengan el string ingresado en el body de la request.
-Ninguno de los campos son obligatorios, se puede filtrar solo por marca o solo por nombre por ejemplo.
-solo trae publicaciones con post_statusId 1, cosa que esta mal. 
+
 
   ##### `Post /api/PostSearch/searchpost`
 
