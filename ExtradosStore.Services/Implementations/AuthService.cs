@@ -1,5 +1,4 @@
 ﻿using ExtradosStore.Common.CustomExceptions.GenericResponsesExceptions;
-using ExtradosStore.Common.CustomExceptions.UserExceptions;
 using ExtradosStore.Common.CustomRequest.AuthRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.DTOs.JWTDTOs;
@@ -67,7 +66,7 @@ namespace ExtradosStore.Services.Implementations
 
             var userInDB = await _atuthDAO.DataSignIn(loginRequest);
             if (userInDB == null) throw new NotFoundException("User Not Found");
-            if (!_hasherService.VerifyPassword(loginRequest.user_password, userInDB.user_password_hash)) throw new IncorrectPasswordException();
+            if (!_hasherService.VerifyPassword(loginRequest.user_password, userInDB.user_password_hash)) throw new UnauthorizedException("incorrect password");
             if (!userInDB.user_status) throw new UnauthorizedException("The user is disabled");
             var userClaims = new ClaimsTokenUserDTO { user_id = userInDB.user_id, user_name = userInDB.user_name, user_email = userInDB.user_email, user_roleid = userInDB.user_roleid };
             var tokenCreated = await _jWTService.CreateToken(userClaims);
