@@ -1,4 +1,5 @@
 ﻿using ExtradosStore.Common.CustomExceptions.GenericResponsesExceptions;
+using System.Data.SqlClient;
 using System.Net;
 
 namespace ExtradosStore.API.Middlewares
@@ -59,6 +60,21 @@ namespace ExtradosStore.API.Middlewares
 
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 await context.Response.WriteAsJsonAsync(ex.Message);
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine($"SQL Exception: {ex.Message} {ex.StackTrace}");
+
+                if (ex.Number == 547)
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    await context.Response.WriteAsJsonAsync("You cannot delete a category or brand associated with an existing post.");
+
+                }
+
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                await context.Response.WriteAsJsonAsync("Something went wrong. Please contact support. middleware");
+
             }
             catch (Exception ex)
             {

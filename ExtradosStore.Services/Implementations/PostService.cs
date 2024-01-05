@@ -1,5 +1,4 @@
-﻿using ExtradosStore.Common.CustomExceptions.PostExceptions;
-using ExtradosStore.Common.CustomExceptions.PostStatusExceptions;
+﻿using ExtradosStore.Common.CustomExceptions.GenericResponsesExceptions;
 using ExtradosStore.Common.CustomRequest.PostRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Services.Interfaces;
@@ -31,94 +30,70 @@ namespace ExtradosStore.Services.Implementations
 
         public async Task<int> CreatePostService(CreateNewPostRequest postRequest)
         {
-            try
-            {
-                var brandId = await _brandDao.DataGetBrandIdByID(postRequest.brand_id);
-                if (brandId == 0) throw new BrandNotFoundException();
 
-                var categoryId = await _categoryDao.DataGetCategoryIdByID(postRequest.category_id);
-                if (categoryId == 0) throw new CategoryNotFoundException();
+            var brandId = await _brandDao.DataGetBrandIdByID(postRequest.brand_id);
+            if (brandId == 0) throw new NotFoundException("The id brand not found");
 
-                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
-                if (statusActiveId == 0) throw new PostStatusNotFoundException();
-                postRequest.post_status_id = statusActiveId;
+            var categoryId = await _categoryDao.DataGetCategoryIdByID(postRequest.category_id);
+            if (categoryId == 0) throw new NotFoundException("The id category not found");
 
+            var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+            if (statusActiveId == 0) throw new NotFoundException("The id postStatus not found");
+            postRequest.post_status_id = statusActiveId;
 
+            return await _postDao.DataCreateNewPost(postRequest);
 
-                return await _postDao.DataCreateNewPost(postRequest);
-
-            }
-            catch
-            {
-
-                throw;
-            }
         }
 
         public async Task<int> SetPostStatus(int postId, int userIdFromToken, string nameRole, string newStatus)
         {
-            try
+
+            var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(postId);
+            if (userIdFromToken != postUserIdFromDB && nameRole == "user")
             {
-
-                var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(postId);
-                if (userIdFromToken != postUserIdFromDB && nameRole == "user")
-                {
-                    throw new UnauthorizedAccessException("the user role can only modify the status of their posts");
-                }
-
-                var statusPausedId = await _postStatusDAO.DataGetPostStatusIdByName(newStatus);
-                if (statusPausedId == 0) throw new PostStatusNotFoundException();
-
-
-                return await _postDao.DataSetStatusActiveToPaused(statusPausedId, postId);
+                throw new UnauthorizedException("the user role can only modify the status of their posts");
             }
-            catch
-            {
 
-                throw;
-            }
+            var statusPausedId = await _postStatusDAO.DataGetPostStatusIdByName(newStatus);
+            if (statusPausedId == 0) throw new NotFoundException("The id postStatus not found");
+
+
+            return await _postDao.DataSetStatusActiveToPaused(statusPausedId, postId);
         }
+
+
         public async Task<int> SetStatusActiveAndUpdateStock(int postId, int userIdFromToken, string newStatus, int newStock)
         {
-            try
-            {
-
-                var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(postId);
-                if (userIdFromToken != postUserIdFromDB) throw new UnauthorizedAccessException("the user can only modify the status of their posts");
-
-                var statusPausedId = await _postStatusDAO.DataGetPostStatusIdByName(newStatus);
-                if (statusPausedId == 0) throw new PostStatusNotFoundException();
-
-                var rowsAffected = await _postDao.DataUpdateStockAndSetStatusActive(postId, statusPausedId, newStock);
 
 
-                return rowsAffected;
-            }
-            catch
-            {
+            var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(postId);
+            if (userIdFromToken != postUserIdFromDB) throw new UnauthorizedException("the user can only modify the status of their posts");
 
-                throw;
-            }
+            var statusPausedId = await _postStatusDAO.DataGetPostStatusIdByName(newStatus);
+            if (statusPausedId == 0) throw new NotFoundException("The id postStatus not found");
+
+            var rowsAffected = await _postDao.DataUpdateStockAndSetStatusActive(postId, statusPausedId, newStock);
+
+
+            return rowsAffected;
+
+
         }
 
 
 
         public async Task<int> UpdatePostService(UpdatePostRequest updateRequest, int userIdFromToken)
         {
-            try
-            {
-                var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(updateRequest.postId);
-                if (postUserIdFromDB == 0) throw new KeyNotFoundException("post not found in data base");
-                if (userIdFromToken != postUserIdFromDB) throw new UnauthorizedAccessException("the user can only modify the status of their posts");
 
-                var rowsAffected = await _postDao.DataUpdatePost(updateRequest);
-                return rowsAffected;
+            var postUserIdFromDB = await _postDao.DataGetUserIdByPostId(updateRequest.postId);
+            if (postUserIdFromDB == 0) throw new NotFoundException("post not found");
+            if (userIdFromToken != postUserIdFromDB) throw new UnauthorizedException("the user can only modify the status of their posts");
 
-            }
-            catch
-            {
-                throw;
-            }
+            var rowsAffected = await _postDao.DataUpdatePost(updateRequest);
+            return rowsAffected;
+
+
+
         }
 
     }

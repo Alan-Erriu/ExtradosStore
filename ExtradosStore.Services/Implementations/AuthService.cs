@@ -1,5 +1,4 @@
 ﻿using ExtradosStore.Common.CustomExceptions.GenericResponsesExceptions;
-using ExtradosStore.Common.CustomExceptions.JWTExceptions;
 using ExtradosStore.Common.CustomExceptions.UserExceptions;
 using ExtradosStore.Common.CustomRequest.AuthRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
@@ -65,64 +64,52 @@ namespace ExtradosStore.Services.Implementations
         //iniciar sesion: devuelve accesstoken y refresh token
         public async Task<AccesAndRefreshTokenDTO> SignInService(LoginUserRequest loginRequest)
         {
-            try
-            {
-                var userInDB = await _atuthDAO.DataSignIn(loginRequest);
-                if (userInDB == null) throw new UserNotFoundException();
-                if (!_hasherService.VerifyPassword(loginRequest.user_password, userInDB.user_password_hash)) throw new IncorrectPasswordException();
-                if (!userInDB.user_status) throw new DisabledUserException();
-                var userClaims = new ClaimsTokenUserDTO { user_id = userInDB.user_id, user_name = userInDB.user_name, user_email = userInDB.user_email, user_roleid = userInDB.user_roleid };
-                var tokenCreated = await _jWTService.CreateToken(userClaims);
-                string refreshTokenCreated = _jWTService.CreateRefreshToken();
-                //antes de guardar el reresh token en la bd, siempre se borra el anterior, de forma que no se repita mas de un registro por usuaior en la bd
-                await _jWTService.DeleteRefreshTokenExpiredFromBd(userInDB.user_id);
-                await _jWTService.SaveHistoryRefreshToken(userInDB.user_id, tokenCreated, refreshTokenCreated);
 
-                return new AccesAndRefreshTokenDTO { AccessToken = tokenCreated, refreshToken = refreshTokenCreated };
-            }
-            catch
-            {
+            var userInDB = await _atuthDAO.DataSignIn(loginRequest);
+            if (userInDB == null) throw new NotFoundException("User Not Found");
+            if (!_hasherService.VerifyPassword(loginRequest.user_password, userInDB.user_password_hash)) throw new IncorrectPasswordException();
+            if (!userInDB.user_status) throw new UnauthorizedException("The user is disabled");
+            var userClaims = new ClaimsTokenUserDTO { user_id = userInDB.user_id, user_name = userInDB.user_name, user_email = userInDB.user_email, user_roleid = userInDB.user_roleid };
+            var tokenCreated = await _jWTService.CreateToken(userClaims);
+            string refreshTokenCreated = _jWTService.CreateRefreshToken();
+            //antes de guardar el reresh token en la bd, siempre se borra el anterior, de forma que no se repita mas de un registro por usuaior en la bd
+            await _jWTService.DeleteRefreshTokenExpiredFromBd(userInDB.user_id);
+            await _jWTService.SaveHistoryRefreshToken(userInDB.user_id, tokenCreated, refreshTokenCreated);
 
-                throw;
-            }
+            return new AccesAndRefreshTokenDTO { AccessToken = tokenCreated, refreshToken = refreshTokenCreated };
+
         }
         // recibe un accessToken, genera un accessToken nuevo,
         // un nuevo refresh token, borra los tokes desactualizados de la db y guarda los nuevos en la db
         public async Task<AccesAndRefreshTokenDTO> GenerateRereshTokensService(AccesAndRefreshTokenDTO tokensRequest)
         {
 
-            try
+
+            var refreshtokenRequest = tokensRequest.refreshToken;
+
+            // extraer claims del access token
+            ClaimsTokenUserDTO user = await _jWTService.GetUserFromAccessToken(tokensRequest.AccessToken);
+
+            //validar que el Refreshtoken(el string) de la request sea el mismo que en la bd (en el campo token_refreshtoken)             
+            if (!await _jWTService.CompareRefreshTokens(user.user_id, refreshtokenRequest)) throw new UnauthorizedException();
+
+            //chequear que el token refresh no este vencido              
+            if (!await _jWTService.RefreshTokenIsActive(user.user_id)) throw new UnauthorizedException();
+
+            //borra los tokens desactualizados en la db
+            await _jWTService.DeleteRefreshTokenExpiredFromBd(user.user_id);
+
+            var newTokens = new AccesAndRefreshTokenDTO
             {
-                var refreshtokenRequest = tokensRequest.refreshToken;
+                AccessToken = await _jWTService.CreateToken(user),
+                refreshToken = _jWTService.CreateRefreshToken()
+            };
+            //guarda los nuevos tokens en la db
+            await _jWTService.SaveHistoryRefreshToken(user.user_id, newTokens.AccessToken, newTokens.refreshToken);
 
-                // extraer claims del access token
-                ClaimsTokenUserDTO user = await _jWTService.GetUserFromAccessToken(tokensRequest.AccessToken);
+            return newTokens;
 
-                //validar que el Refreshtoken(el string) de la request sea el mismo que en la bd (en el campo token_refreshtoken)             
-                if (!await _jWTService.CompareRefreshTokens(user.user_id, refreshtokenRequest)) throw new InvalidRefreshTokenException();
 
-                //chequear que el token refresh no este vencido              
-                if (!await _jWTService.RefreshTokenIsActive(user.user_id)) throw new ExpiredRefreshTokenException();
-
-                //borra los tokens desactualizados en la db
-                await _jWTService.DeleteRefreshTokenExpiredFromBd(user.user_id);
-
-                var newTokens = new AccesAndRefreshTokenDTO
-                {
-                    AccessToken = await _jWTService.CreateToken(user),
-                    refreshToken = _jWTService.CreateRefreshToken()
-                };
-                //guarda los nuevos tokens en la db
-                await _jWTService.SaveHistoryRefreshToken(user.user_id, newTokens.AccessToken, newTokens.refreshToken);
-
-                return newTokens;
-
-            }
-            catch
-            {
-
-                throw;
-            }
         }
 
     }

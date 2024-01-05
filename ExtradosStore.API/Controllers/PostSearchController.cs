@@ -22,27 +22,16 @@ namespace ExtradosStore.API.Controllers
         [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> SearhPost(PostSearchRequest postSearchRequest)
         {
-            try
-            {
-                var allPost = await _postSearchService.SearchPost(postSearchRequest);
-                return Ok(allPost);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+            var allPost = await _postSearchService.SearchPost(postSearchRequest);
+            return Ok(allPost);
         }
         //todas las publicaciones con o sin oferta, con estado "active", si tiene oferta aplica el descuento.
         [HttpGet("getall")]
         [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> GetAllPostActive()
         {
-
             var allPostActiveWithOffer = await _postSearchService.GetAllPostService();
             return Ok(allPostActiveWithOffer);
-
-
         }
 
         //todas las publicaciones con oferta, con estado "active"
@@ -50,18 +39,8 @@ namespace ExtradosStore.API.Controllers
         [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> GetAllPostActiveWithOffer()
         {
-            try
-            {
-
-                var allPostActiveWithOffer = await _postSearchService.GetAllPostWithOffer();
-                return Ok(allPostActiveWithOffer);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+            var allPostActiveWithOffer = await _postSearchService.GetAllPostWithOffer();
+            return Ok(allPostActiveWithOffer);
         }
 
 
@@ -71,18 +50,8 @@ namespace ExtradosStore.API.Controllers
         [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> GetPostByPostId(int postId)
         {
-            try
-            {
-
-                var post = await _postSearchService.GetPostByPostId(postId);
-                return Ok(post);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+            var post = await _postSearchService.GetPostByPostId(postId);
+            return Ok(post);
         }
 
         //obtener todas las publicaciones de un usuario
@@ -90,18 +59,8 @@ namespace ExtradosStore.API.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetAllPostByUserId(int userId)
         {
-            try
-            {
-
-                var post = await _postSearchService.GetAllPostByUserId(userId);
-                return Ok(post);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+            var post = await _postSearchService.GetAllPostByUserId(userId);
+            return Ok(post);
         }
     }
 }

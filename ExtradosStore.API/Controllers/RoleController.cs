@@ -2,7 +2,6 @@
 using ExtradosStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 
 namespace ExtradosStore.API.Controllers
 {
@@ -21,39 +20,17 @@ namespace ExtradosStore.API.Controllers
 
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleDTO roleRequest)
         {
-            try
-            {
-                CreateRoleDTO roleCreated = await _roleService.CreateRoleService(roleRequest);
-                return Ok("succes");
-            }
-            catch (DuplicateNameException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return Conflict("The name role is already in use");
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine($"Error{Ex.Message}");
-                Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+
+            CreateRoleDTO roleCreated = await _roleService.CreateRoleService(roleRequest);
+            return Ok("succes");
         }
         [Authorize(Roles = "admin")]
         [HttpGet("getroles")]
 
         public async Task<IActionResult> GetRoles()
         {
-            try
-            {
-                var rolesDB = await _roleService.GetRolesService();
-                return Ok(rolesDB);
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine($"Error:{Ex.Message}");
-                Console.WriteLine($"Stack Trace: {Ex.StackTrace}");
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+            var rolesDB = await _roleService.GetRolesService();
+            return Ok(rolesDB);
         }
     }
 }

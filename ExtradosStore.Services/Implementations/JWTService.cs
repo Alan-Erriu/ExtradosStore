@@ -1,4 +1,5 @@
-﻿using ExtradosStore.Configuration.JWTConfiguration;
+﻿using ExtradosStore.Common.CustomExceptions.GenericResponsesExceptions;
+using ExtradosStore.Configuration.JWTConfiguration;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.DTOs.JWTDTOs;
 using ExtradosStore.Entities.Models;
@@ -96,21 +97,15 @@ namespace ExtradosStore.Services.Implementations
         //recibe un access token y retorna un nuevo access token y un refresh token
         public async Task<AccesAndRefreshTokenDTO> ReturnRefreshToken(string accessTokenRequest)
         {
-            try
-            {
-                ClaimsTokenUserDTO user = await GetUserFromAccessToken(accessTokenRequest);
-                var refreshTokenCreated = CreateRefreshToken();
-                //crear un nuevo token de acceso a partir de los claims del token vencido
-                var roleName = await _roleDAO.DataGetNameRoleById(user.user_roleid);
-                var tokenCreated = await CreateToken(user);
-                await SaveHistoryRefreshToken(user.user_id, tokenCreated, refreshTokenCreated);
-                return new AccesAndRefreshTokenDTO { AccessToken = tokenCreated, refreshToken = refreshTokenCreated };
-            }
-            catch
-            {
 
-                throw;
-            }
+            ClaimsTokenUserDTO user = await GetUserFromAccessToken(accessTokenRequest);
+            var refreshTokenCreated = CreateRefreshToken();
+            //crear un nuevo token de acceso a partir de los claims del token vencido
+            var roleName = await _roleDAO.DataGetNameRoleById(user.user_roleid);
+            var tokenCreated = await CreateToken(user);
+            await SaveHistoryRefreshToken(user.user_id, tokenCreated, refreshTokenCreated);
+            return new AccesAndRefreshTokenDTO { AccessToken = tokenCreated, refreshToken = refreshTokenCreated };
+
 
         }
         //buscar un refresh token por id_user y compararlo contra otro refresh token
@@ -119,7 +114,7 @@ namespace ExtradosStore.Services.Implementations
 
             Token refreshTokenBd = await _jwtDao.DataSelectRefreshToken(id_user);
 
-            if (refreshTokenBd.token_accesstoken == null) throw new ArgumentNullException("token not found in db, refreshTokenBd.refresh_Token_tokenhistory will be null");
+            if (refreshTokenBd.token_accesstoken == null) throw new NotFoundException("token not found in db, refreshTokenBd.refresh_Token_tokenhistory will be null");
             if (refreshTokenBd.token_refreshToken != refreshToken) return false;
             return true;
         }
@@ -136,7 +131,7 @@ namespace ExtradosStore.Services.Implementations
         {
 
             Token refreshTokenBd = await _jwtDao.DataSelectRefreshToken(id_user);
-            if (refreshTokenBd.token_accesstoken == null) throw new ArgumentNullException("token not found in db, refreshTokenBd.expiration_date_tokenhistory will be null");
+            if (refreshTokenBd.token_accesstoken == null) throw new NotFoundException("token not found in db, refreshTokenBd.expiration_date_tokenhistory will be null");
             long currentEpochTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             if (refreshTokenBd.token_expiration_date_refreshtoken < currentEpochTime) return false;
             return true;
@@ -166,7 +161,7 @@ namespace ExtradosStore.Services.Implementations
             JwtSecurityToken jwtSecurityToken = securityToken as JwtSecurityToken;
             if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new SecurityTokenException("Invalid token");
+                throw new UnauthorizedException();
             }
 
             var user = new ClaimsTokenUserDTO

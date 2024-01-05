@@ -17,36 +17,31 @@ namespace ExtradosStore.Services.Implementations
 
         public async Task<List<PurchaseHistoryResponse>> GetHistoryGetUserPurchaseHistory(int userId)
         {
-            try
+
+            var listSales = await _salesDAO.DataGetAllSalesByUserId(userId);
+            var listSalesDetails = new List<SalesDetailDTO>();
+
+            foreach (var sales in listSales)
             {
-                var listSales = await _salesDAO.DataGetAllSalesByUserId(userId);
-                var listSalesDetails = new List<SalesDetailDTO>();
-
-                foreach (var sales in listSales)
-                {
-                    var details = await _salesDetailDAO.DataGetAllSalesDetailBySalesId(sales.sales_id);
-                    listSalesDetails.AddRange(details);
-                }
-
-
-                var result = (from sales in listSales
-                              join salesDetails in listSalesDetails on sales.sales_id equals salesDetails.sales_id
-
-                              select new PurchaseHistoryResponse
-                              {
-                                  post_id = salesDetails.post_id,
-                                  quantity = salesDetails.quantity,
-                                  total = salesDetails.subtotal,
-                                  BuyDate = sales.date_sale,
-                              }).ToList();
-                return result;
-
+                var details = await _salesDetailDAO.DataGetAllSalesDetailBySalesId(sales.sales_id);
+                listSalesDetails.AddRange(details);
             }
-            catch
-            {
 
-                throw;
-            }
+
+            var result = (from sales in listSales
+                          join salesDetails in listSalesDetails on sales.sales_id equals salesDetails.sales_id
+
+                          select new PurchaseHistoryResponse
+                          {
+                              post_id = salesDetails.post_id,
+                              quantity = salesDetails.quantity,
+                              total = salesDetails.subtotal,
+                              BuyDate = sales.date_sale,
+                          }).ToList();
+            return result;
+
+
+
         }
     }
 }

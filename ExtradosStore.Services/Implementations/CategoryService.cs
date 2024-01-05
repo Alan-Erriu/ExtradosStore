@@ -1,4 +1,4 @@
-﻿using ExtradosStore.Common.CustomExceptions.PostExceptions;
+﻿using ExtradosStore.Common.CustomExceptions.GenericResponsesExceptions;
 using ExtradosStore.Data.DAOs.Interfaces;
 using ExtradosStore.Entities.Models;
 using ExtradosStore.Services.Interfaces;
@@ -20,7 +20,7 @@ namespace ExtradosStore.Services.Implementations
             try
             {
                 var vategoryIdFromDB = await _categoryDao.DataGetCategoryIdByName(categoryName.ToLower());
-                if (vategoryIdFromDB != 0) throw new DuplicateNameCategoryException();
+                if (vategoryIdFromDB != 0) throw new ConflictException("The name category is already in use");
                 var rowsAffected = await _categoryDao.DataCreateNewCategory(categoryName.ToLower());
                 return rowsAffected;
             }
@@ -35,7 +35,7 @@ namespace ExtradosStore.Services.Implementations
         {
             try
             {
-                if (await _categoryDao.DataGetCategoryIdByID(categoryId) == 0) throw new KeyNotFoundException("id category not found in database");
+                if (await _categoryDao.DataGetCategoryIdByID(categoryId) == 0) throw new NotFoundException("id category not found");
                 var rowsAffected = await _categoryDao.DataDeleteCategoryByID(categoryId);
                 return rowsAffected;
 
@@ -50,16 +50,7 @@ namespace ExtradosStore.Services.Implementations
 
         public async Task<List<Category>> GetAllCategorysService()
         {
-            try
-            {
-                return await _categoryDao.DataGetAllCategorys();
-
-            }
-            catch
-            {
-
-                throw;
-            }
+            return await _categoryDao.DataGetAllCategorys();
         }
     }
 

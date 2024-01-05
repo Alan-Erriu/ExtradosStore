@@ -20,26 +20,20 @@ namespace ExtradosStore.API.Controllers
 
         public async Task<IActionResult> GetPurchaseHistory()
         {
-            try
-            {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-                if (userIdClaim == null) return StatusCode(401, "Unauthorized");
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null) return StatusCode(401, "Unauthorized");
 
 
-                int.TryParse(userIdClaim.Value, out int userIdFromToken);
+            int.TryParse(userIdClaim.Value, out int userIdFromToken);
 
-                var historyUser = await _salesHistoryService.GetHistoryGetUserPurchaseHistory(userIdFromToken);
+            var historyUser = await _salesHistoryService.GetHistoryGetUserPurchaseHistory(userIdFromToken);
 
-                return Ok(historyUser);
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine($"Error getting history user  {Ex.Message} {Ex.StackTrace}");
-
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+            return Ok(historyUser);
         }
+
+
 
         //*********************************** endpoints para admin role ******************************************************
         [Authorize(Roles = "admin")]
@@ -47,19 +41,12 @@ namespace ExtradosStore.API.Controllers
 
         public async Task<IActionResult> GetPurchaseHistoryByUserIdAdmin(int userId)
         {
-            try
-            {
 
-                var historyUser = await _salesHistoryService.GetHistoryGetUserPurchaseHistory(userId);
 
-                return Ok(historyUser);
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine($"Error getting history user  {Ex.Message} {Ex.StackTrace}");
+            var historyUser = await _salesHistoryService.GetHistoryGetUserPurchaseHistory(userId);
 
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+            return Ok(historyUser);
+
         }
 
     }

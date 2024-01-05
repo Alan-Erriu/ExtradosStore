@@ -18,44 +18,26 @@ namespace ExtradosStore.Services.Implementations
 
         public async Task<int> CreateOfferService(CreateOfferRequest offerRequest, int userId)
         {
-            try
-            {
-                var rowsAffected = await _offerDAO.DataCreateOffer(offerRequest, userId);
-                return rowsAffected;
-            }
-            catch
-            {
 
-                throw;
-            }
+            var rowsAffected = await _offerDAO.DataCreateOffer(offerRequest, userId);
+            return rowsAffected;
+
         }
 
         public async Task<List<Offer>> GetAllOfferActive()
         {
-            try
-            {
-                var rowsAffected = await _offerDAO.GetAllOfferActive();
-                return rowsAffected;
-            }
-            catch
-            {
 
-                throw;
-            }
+            var rowsAffected = await _offerDAO.GetAllOfferActive();
+            return rowsAffected;
+
         }
 
         public async Task<List<Offer>> GetAllOffer()
         {
-            try
-            {
-                var rowsAffected = await _offerDAO.GetAllOffer();
-                return rowsAffected;
-            }
-            catch
-            {
 
-                throw;
-            }
+            var rowsAffected = await _offerDAO.GetAllOffer();
+            return rowsAffected;
+
         }
     }
 }
