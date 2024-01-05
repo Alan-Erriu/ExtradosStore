@@ -16,7 +16,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
             _SQLServerConfig = bdConfig.Value;
 
         }
-
+        #region querys
         private string _sqlInserIntoOfferPost = @"INSERT INTO [offer_post]  (offer_post_postId,offer_post_offerId,offer_post_discount)      
                                                   VALUES(@OfferPostPostId,@OfferPostOfferId,@OfferPostPostDiscount)";
 
@@ -30,134 +30,95 @@ namespace ExtradosStore.Data.DAOs.Implementations
         private string _sqlDeleteAllOfferPostByOfferId = @"DELETE from [offer_post] WHERE offer_post_offerId = @OfferId";
 
         private string _SqlSelectDiscountByPostID = @"SELECT offer_post_discount FROM [offer_post] WHERE offer_post_postId = @PostId";
-
+        #endregion
 
 
         public async Task<List<OfferPost>> DataGetAllOfferPost()
         {
-            try
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var listOfferPost = (await connection.QueryAsync<OfferPost>(_sqlSelectAllOfferPost)).ToList();
-                    return listOfferPost;
-                }
-            }
-            catch
-            {
-
-                throw;
+                var listOfferPost = (await connection.QueryAsync<OfferPost>(_sqlSelectAllOfferPost)).ToList();
+                return listOfferPost;
             }
         }
         public async Task<int> DataGetOfferId(int postId)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        PostId = postId
-                    };
-                    var offerIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectOfferId, parameters);
-                    return offerIdFromDB;
-                }
+                    PostId = postId
+                };
+                var offerIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectOfferId, parameters);
+                return offerIdFromDB;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<int> DataGerDiscountByPostId(int postId)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        PostId = postId
-                    };
-                    var offerIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_SqlSelectDiscountByPostID, parameters);
-                    return offerIdFromDB;
-                }
+                    PostId = postId
+                };
+                var offerIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_SqlSelectDiscountByPostID, parameters);
+                return offerIdFromDB;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<int> DeleteOfferPostByPostId(int postId)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        PostId = postId
-                    };
-                    var offerIdFromDB = await connection.ExecuteAsync(_sqlDeleteOfferPostByPostId, parameters);
+                    PostId = postId
+                };
+                var offerIdFromDB = await connection.ExecuteAsync(_sqlDeleteOfferPostByPostId, parameters);
 
-                    return offerIdFromDB;
-                }
+                return offerIdFromDB;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<int> DeleteAllOfferPostByOfferId(int offerId)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        OfferID = offerId
-                    };
-                    var offerIdFromDB = await connection.ExecuteAsync(_sqlDeleteAllOfferPostByOfferId, parameters);
+                    OfferID = offerId
+                };
+                var offerIdFromDB = await connection.ExecuteAsync(_sqlDeleteAllOfferPostByOfferId, parameters);
 
-                    return offerIdFromDB;
-                }
+                return offerIdFromDB;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<int> AddPostToOfferData(AddPostToOfferRequest addPostToOfferRequest)
         {
-            try
-            {
 
-                using (var connnection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
+            using (var connnection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        OfferPostPostId = addPostToOfferRequest.offer_post_postId,
-                        OfferPostOfferId = addPostToOfferRequest.offer_post_offerId,
-                        OfferPostPostDiscount = addPostToOfferRequest.offer_post_discount
-                    };
-                    var rowsAffected = await connnection.ExecuteAsync(_sqlInserIntoOfferPost, parameters);
-                    return rowsAffected;
-                }
+                    OfferPostPostId = addPostToOfferRequest.offer_post_postId,
+                    OfferPostOfferId = addPostToOfferRequest.offer_post_offerId,
+                    OfferPostPostDiscount = addPostToOfferRequest.offer_post_discount
+                };
+                var rowsAffected = await connnection.ExecuteAsync(_sqlInserIntoOfferPost, parameters);
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
+
         }
 
 

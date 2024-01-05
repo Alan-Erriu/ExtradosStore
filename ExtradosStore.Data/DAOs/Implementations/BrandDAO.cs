@@ -30,114 +30,83 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         public async Task<int> DataCreateNewBrand(string brandName)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        BrandName = brandName
-                    };
+                    BrandName = brandName
+                };
 
-                    var rowsAffected = await connection.ExecuteAsync(_sqlInsertNewBrand, parameters);
+                var rowsAffected = await connection.ExecuteAsync(_sqlInsertNewBrand, parameters);
 
-                    return rowsAffected;
-                }
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
         }
 
         public async Task<int> DataGetBrandIdByID(int brandId)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        BrandId = brandId
-                    };
+                    BrandId = brandId
+                };
 
-                    var brandIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlGetBrandIdById, parameters);
+                var brandIdFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlGetBrandIdById, parameters);
 
-                    return brandIdFromDB;
-                }
+                return brandIdFromDB;
             }
-            catch
-            {
 
-                throw;
-            }
         }
 
         public async Task<int> DataGetBrandIdByName(string brandName)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        BrandName = brandName
-                    };
+                    BrandName = brandName
+                };
 
-                    var rowsAffected = await connection.QueryFirstOrDefaultAsync<int>(_sqlGetBrandIdByName, parameters);
+                var rowsAffected = await connection.QueryFirstOrDefaultAsync<int>(_sqlGetBrandIdByName, parameters);
 
-                    return rowsAffected;
-                }
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
         }
 
         public async Task<int> DataDeleteBrandByID(int brandId)
         {
-            try
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        BrandId = brandId
-                    };
+                    BrandId = brandId
+                };
 
-                    var rowsAffected = await connection.ExecuteAsync(_sqlDeleteBrandById, parameters);
+                var rowsAffected = await connection.ExecuteAsync(_sqlDeleteBrandById, parameters);
 
-                    return rowsAffected;
-                }
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
         }
 
         public async Task<List<Brand>> DataGetAllBrands()
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
 
-
-
-                    return (await connection.QueryAsync<Brand>(_getAllBrands)).ToList();
-
-                }
-            }
-            catch
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
 
-                throw;
+
+
+                return (await connection.QueryAsync<Brand>(_getAllBrands)).ToList();
+
             }
+
         }
 
     }

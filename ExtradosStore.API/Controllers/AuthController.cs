@@ -27,33 +27,8 @@ namespace ExtradosStore.API.Controllers
         public async Task<IActionResult> SignUp([FromBody] RegisterUserRequest createUserRequest)
         {
 
-            try
-            {
-                var rowsAffected = await _authService.SignUpService(createUserRequest);
-
-
-                return Ok("Succes");
-            }
-            catch (PhoneNumberAlreadyExistsException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                Console.WriteLine(ex.Message);
-                return NotFound("user role not found");
-            }
-            catch (EmailAlreadyExistsException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine($"Error register a new user {Ex.Message} {Ex.StackTrace}");
-
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
-
+            var rowsAffected = await _authService.SignUpService(createUserRequest);
+            return Ok("Succes");
 
         }
 

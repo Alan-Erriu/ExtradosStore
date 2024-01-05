@@ -15,7 +15,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
             _SQLServerConfig = bdConfig.Value;
 
         }
-
+        #region querys
         private string _sqlInsertNewCategory = "INSERT INTO [category] (category_name) values (@CategoryName) ";
 
         private string _sqlGetCategoryIdById = "SELECT category_id FROM [category] where category_id = @CategoryId";
@@ -25,116 +25,86 @@ namespace ExtradosStore.Data.DAOs.Implementations
         private string _getAllCategorys = "select category_id, category_name FROM [category]";
 
         private string _sqlgetCategoryIdByname = "select category_id from [category] where category_name = @CategoryName";
-
+        #endregion
         public async Task<int> DataCreateNewCategory(string categoryName)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        CategoryName = categoryName
-                    };
+                    CategoryName = categoryName
+                };
 
-                    var rowsAffected = await connection.ExecuteAsync(_sqlInsertNewCategory, parameters);
+                var rowsAffected = await connection.ExecuteAsync(_sqlInsertNewCategory, parameters);
 
-                    return rowsAffected;
-                }
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
         }
 
         public async Task<int> DataGetCategoryIdByID(int categoryId)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        CategoryID = categoryId
-                    };
+                    CategoryID = categoryId
+                };
 
-                    var categoryFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlGetCategoryIdById, parameters);
+                var categoryFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlGetCategoryIdById, parameters);
 
-                    return categoryFromDB;
-                }
+                return categoryFromDB;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<int> DataGetCategoryIdByName(string categoryName)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        CategoryName = categoryName
-                    };
+                    CategoryName = categoryName
+                };
 
-                    var categoryFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlgetCategoryIdByname, parameters);
+                var categoryFromDB = await connection.QueryFirstOrDefaultAsync<int>(_sqlgetCategoryIdByname, parameters);
 
-                    return categoryFromDB;
-                }
+                return categoryFromDB;
             }
-            catch
-            {
 
-                throw;
-            }
         }
 
         public async Task<int> DataDeleteCategoryByID(int categoryId)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        CategoryId = categoryId
-                    };
+                    CategoryId = categoryId
+                };
 
-                    var rowsAffected = await connection.ExecuteAsync(_sqlDeleteCategoryById, parameters);
-                    Console.WriteLine(rowsAffected);
-                    return rowsAffected;
-                }
+                var rowsAffected = await connection.ExecuteAsync(_sqlDeleteCategoryById, parameters);
+                Console.WriteLine(rowsAffected);
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
         }
 
         public async Task<List<Category>> DataGetAllCategorys()
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
 
-
-
-                    return (await connection.QueryAsync<Category>(_getAllCategorys)).ToList();
-
-                }
-            }
-            catch
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
 
-                throw;
+
+
+                return (await connection.QueryAsync<Category>(_getAllCategorys)).ToList();
+
             }
+
         }
     }
 }

@@ -24,43 +24,30 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         public async Task<int> DataCreateNewSales(int userId, decimal total)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new
-                    {
-                        UserId = userId,
-                        Total = total,
-                        DateSale = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-                    };
-                    return await connection.QueryFirstOrDefaultAsync<int>(_sqlInsertSales, parameters);
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
+                {
+                    UserId = userId,
+                    Total = total,
+                    DateSale = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                };
+                return await connection.QueryFirstOrDefaultAsync<int>(_sqlInsertSales, parameters);
             }
+
         }
         public async Task<List<SaleDTO>> DataGetAllSalesByUserId(int userId)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId };
-                    var AllSales = (await connection.QueryAsync<SaleDTO>(_sqlSelectAllSalesByUserId, parameters)).ToList();
+                var parameters = new { UserId = userId };
+                var AllSales = (await connection.QueryAsync<SaleDTO>(_sqlSelectAllSalesByUserId, parameters)).ToList();
 
-                    return AllSales;
-                }
-
+                return AllSales;
             }
-            catch
-            {
 
-                throw;
-            }
         }
     }
 }

@@ -24,38 +24,26 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         public async Task<List<PostStatus>> DataGetAllPostStatus()
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var lisPostStatus = (await connection.QueryAsync<PostStatus>(_sqlSelectAllPostStatus)).ToList();
-                    return lisPostStatus;
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var lisPostStatus = (await connection.QueryAsync<PostStatus>(_sqlSelectAllPostStatus)).ToList();
+                return lisPostStatus;
             }
+
         }
 
         public async Task<int> DataGetPostStatusIdByName(string statusName)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { NameStatus = statusName };
-                    var idStatus = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectPostStatusIdByName, parameters);
-                    return idStatus;
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { NameStatus = statusName };
+                var idStatus = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectPostStatusIdByName, parameters);
+                return idStatus;
             }
+
 
         }
 

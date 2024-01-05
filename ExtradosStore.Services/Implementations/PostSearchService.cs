@@ -27,75 +27,47 @@ namespace ExtradosStore.Services.Implementations
 
         public async Task<List<PostWithOfferDTO>> GetAllPostService()
         {
-            try
-            {
-                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
-                var listPostFromDB = await _postDao.GetAllPostActive(statusActiveId);
-                return listPostFromDB;
 
-            }
-            catch
-            {
-                throw;
-            }
+            var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+            var listPostFromDB = await _postDao.GetAllPostActive(statusActiveId);
+            return listPostFromDB;
+
+
         }
         public async Task<List<PostWithOfferDTO>> GetAllPostWithOffer()
         {
-            try
-            {
-                var currentTimeEpoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
-                var listPostFromDB = await _postDao.GetAllPostActiveWithOffer(statusActiveId, currentTimeEpoch);
-                return listPostFromDB;
 
-            }
-            catch
-            {
-                throw;
-            }
+            var currentTimeEpoch = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+            var listPostFromDB = await _postDao.GetAllPostActiveWithOffer(statusActiveId, currentTimeEpoch);
+            return listPostFromDB;
+
         }
 
 
         public async Task<List<PostWithOfferDTO>> SearchPost(PostSearchRequest postSearchRequest)
         {
-            try
-            {
-                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
-                return await _postDao.SearchPostActive(postSearchRequest, statusActiveId);
-            }
-            catch
-            {
 
-                throw;
-            }
+            var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+            return await _postDao.SearchPostActive(postSearchRequest, statusActiveId);
+
+
         }
 
         public async Task<PostWithOfferDTO> GetPostByPostId(int postId)
         {
-            try
-            {
-                var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
-                return await _postDao.DataGetPostByPostId(postId, statusActiveId);
-            }
-            catch
-            {
 
-                throw;
-            }
+            var statusActiveId = await _postStatusDAO.DataGetPostStatusIdByName("active");
+            return await _postDao.DataGetPostByPostId(postId, statusActiveId);
+
         }
 
         public async Task<List<PostDTO>> GetAllPostByUserId(int userId)
         {
-            try
-            {
 
-                return await _postDao.DataAllPostByUserId(userId);
-            }
-            catch
-            {
 
-                throw;
-            }
+            return await _postDao.DataAllPostByUserId(userId);
+
         }
     }
 }

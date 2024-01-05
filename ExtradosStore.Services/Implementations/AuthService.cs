@@ -1,4 +1,5 @@
-﻿using ExtradosStore.Common.CustomExceptions.JWTExceptions;
+﻿using ExtradosStore.Common.CustomExceptions.GenericResponsesExceptions;
+using ExtradosStore.Common.CustomExceptions.JWTExceptions;
 using ExtradosStore.Common.CustomExceptions.UserExceptions;
 using ExtradosStore.Common.CustomRequest.AuthRequest;
 using ExtradosStore.Data.DAOs.Interfaces;
@@ -26,43 +27,38 @@ namespace ExtradosStore.Services.Implementations
         //registrarse:  devuelve un int que representa las filas afectadas (dapper)
         public async Task<int> SignUpService(RegisterUserRequest createUserRequest)
         {
-            try
+
+            var emailInDB = (await _atuthDAO.DataGetEmailUser(createUserRequest.user_email))?.ToLower();
+            var emailInRequest = createUserRequest.user_email.ToLower();
+            var phoneNumberInDB = (await _atuthDAO.DataGetPhoneNumberUser(createUserRequest.user_phone_number));
+            var roleList = await _roleDAO.DataGetRoles();
+
+            if (emailInDB != null && emailInDB == emailInRequest) throw new ConflictException("The email is already in use");
+
+            if (phoneNumberInDB != null && phoneNumberInDB == createUserRequest.user_phone_number) throw new ConflictException("The phone number is already in use");
+
+            int userIdRole = roleList.FirstOrDefault(role => role.role_name == "user")?.role_id ?? 0;
+            if (userIdRole == 0) throw new NotFoundException("role *user* not found in data base");
+
+            createUserRequest.user_password_hash = _hasherService.HashPasswordUser(createUserRequest.user_password_hash);
+
+            long dateOfBirthNewUserEpoch = new DateTimeOffset(createUserRequest.user_date_of_birth).ToUnixTimeMilliseconds();
+
+            var Newuser = new User
             {
-                var emailInDB = (await _atuthDAO.DataGetEmailUser(createUserRequest.user_email))?.ToLower();
-                var emailInRequest = createUserRequest.user_email.ToLower();
-                var phoneNumberInDB = (await _atuthDAO.DataGetPhoneNumberUser(createUserRequest.user_phone_number));
-                var roleList = await _roleDAO.DataGetRoles();
-
-                if (emailInDB != null && emailInDB == emailInRequest) throw new EmailAlreadyExistsException();
-
-                if (phoneNumberInDB != null && phoneNumberInDB == createUserRequest.user_phone_number) throw new PhoneNumberAlreadyExistsException();
-
-                int userIdRole = roleList.FirstOrDefault(role => role.role_name == "user")?.role_id ?? 0;
-                if (userIdRole == 0) throw new KeyNotFoundException("role *user* not found in data base");
-
-                createUserRequest.user_password_hash = _hasherService.HashPasswordUser(createUserRequest.user_password_hash);
-
-                long dateOfBirthNewUserEpoch = new DateTimeOffset(createUserRequest.user_date_of_birth).ToUnixTimeMilliseconds();
-
-                var Newuser = new User
-                {
-                    user_name = createUserRequest.user_name,
-                    user_lastname = createUserRequest.user_lastname,
-                    user_email = createUserRequest.user_email,
-                    user_password_hash = createUserRequest.user_password_hash,
-                    user_roleid = userIdRole,
-                    user_created_at = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                    user_date_of_birth = dateOfBirthNewUserEpoch,
-                    user_phone_number = createUserRequest.user_phone_number,
-                };
-                return await _atuthDAO.DataSignUp(Newuser);
+                user_name = createUserRequest.user_name,
+                user_lastname = createUserRequest.user_lastname,
+                user_email = createUserRequest.user_email,
+                user_password_hash = createUserRequest.user_password_hash,
+                user_roleid = userIdRole,
+                user_created_at = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                user_date_of_birth = dateOfBirthNewUserEpoch,
+                user_phone_number = createUserRequest.user_phone_number,
+            };
+            return await _atuthDAO.DataSignUp(Newuser);
 
 
-            }
-            catch
-            {
-                throw;
-            }
+
         }
 
 

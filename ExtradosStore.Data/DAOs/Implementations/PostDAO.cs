@@ -18,7 +18,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
         {
             _SQLServerConfig = bdConfig.Value;
         }
-
+        #region querys
         private string _sqlInsertNewPost = @"Insert INTO[post] (post_userid,post_name,post_description,post_price,post_stock,post_categoryId,post_create_at,post_brandId, post_img)
                                               VALUES (@UserId,@PostName,@PostDescription,@PostPrice,@PostStock,@PostCategoryId,@CreateAt,@PostBrandId,@PostImg) ";
 
@@ -117,91 +117,68 @@ JOIN
     [brand] b on b.brand_id = p.post_brandId
 ";
 
-
+        #endregion
 
         public async Task<int> DataCreateNewPost(CreateNewPostRequest CreateNewPostRequest)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        UserId = CreateNewPostRequest.post_userId,
-                        PostName = CreateNewPostRequest.post_name,
-                        PostDescription = CreateNewPostRequest.post_description,
-                        PostPrice = CreateNewPostRequest.post_price,
-                        PostStock = CreateNewPostRequest.post_stock,
-                        PostImg = CreateNewPostRequest.post_img,
-                        PostCategoryId = CreateNewPostRequest.category_id,
-                        PostBrandId = CreateNewPostRequest.brand_id,
-                        CreateAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
-                    };
+                    UserId = CreateNewPostRequest.post_userId,
+                    PostName = CreateNewPostRequest.post_name,
+                    PostDescription = CreateNewPostRequest.post_description,
+                    PostPrice = CreateNewPostRequest.post_price,
+                    PostStock = CreateNewPostRequest.post_stock,
+                    PostImg = CreateNewPostRequest.post_img,
+                    PostCategoryId = CreateNewPostRequest.category_id,
+                    PostBrandId = CreateNewPostRequest.brand_id,
+                    CreateAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                };
 
-                    var rowsAffected = await connection.ExecuteAsync(_sqlInsertNewPost, parameters);
+                var rowsAffected = await connection.ExecuteAsync(_sqlInsertNewPost, parameters);
 
-                    return rowsAffected;
-                }
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
+
         }
         public async Task<int> DataGetUserIdByPostId(int postId)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { PostId = postId };
-                    return await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectUserIdByPostId, parameters);
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { PostId = postId };
+                return await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectUserIdByPostId, parameters);
             }
+
+
         }
         public async Task<StockAndStatusDTO> DataGetStatusAndStockByPostId(int postId)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { PostId = postId };
-                    return await connection.QueryFirstOrDefaultAsync<StockAndStatusDTO>(_selectStatusAndStockByPostID, parameters);
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { PostId = postId };
+                return await connection.QueryFirstOrDefaultAsync<StockAndStatusDTO>(_selectStatusAndStockByPostID, parameters);
             }
+
+
         }
 
         public async Task<PostPriceImgAndName> DataGetPostPriceNameAndImgById(int postId)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { PostId = postId };
-                    return await connection.QueryFirstOrDefaultAsync<PostPriceImgAndName>(_selectPostNamePriceAndImgByPostId, parameters);
-                }
+                var parameters = new { PostId = postId };
+                return await connection.QueryFirstOrDefaultAsync<PostPriceImgAndName>(_selectPostNamePriceAndImgByPostId, parameters);
             }
 
-            catch
-            {
-
-                throw;
-            }
         }
         public async Task<int> DataGetStatusIdByPostId(int postId)
         {
-            try
             {
                 using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
                 {
@@ -212,43 +189,27 @@ JOIN
                     return PostStatusId;
                 }
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<int> DataUpdateStockAndSetStatusActive(int postId, int statusId, int newStock)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { PostId = postId, StatusId = statusId, Stock = newStock };
-                    return await connection.ExecuteAsync(_sqlUpdateStockPost, parameters);
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { PostId = postId, StatusId = statusId, Stock = newStock };
+                return await connection.ExecuteAsync(_sqlUpdateStockPost, parameters);
             }
+
         }
         public async Task<int> DataSetStatusActiveToPaused(int statusId, int postId)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { StatusId = statusId, PostId = postId };
-                    return await connection.ExecuteAsync(_sqlSetStatusActiveToPaused, parameters);
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { StatusId = statusId, PostId = postId };
+                return await connection.ExecuteAsync(_sqlSetStatusActiveToPaused, parameters);
             }
+
         }
 
 
@@ -303,138 +264,110 @@ JOIN
 
         public async Task<List<PostWithOfferDTO>> GetAllPostActive(int statusActiveId)
         {
-            try
+
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
+                var sqlBuilder = new StringBuilder(_selectAllPostActive);
+                sqlBuilder.Append("where post_status_i = @StatusId");
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("StatusId", statusActiveId);
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var sqlBuilder = new StringBuilder(_selectAllPostActive);
-                    sqlBuilder.Append("where post_status_id = @StatusId");
-                    var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("StatusId", statusActiveId);
-
-                    var allPostActivedWithOffer = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
-                    return allPostActivedWithOffer;
-                }
+                var allPostActivedWithOffer = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
+                return allPostActivedWithOffer;
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
         }
         public async Task<List<PostWithOfferDTO>> GetAllPostActiveWithOffer(int statusActiveId, long currentTimeEpoch)
         {
-            try
+
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
+                var sqlBuilder = new StringBuilder(_selectAllPostActiveWithOffer);
+                sqlBuilder.Append("where post_status_id = @StatusId And offer_date_expiration > @CurrentTime");
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var sqlBuilder = new StringBuilder(_selectAllPostActiveWithOffer);
-                    sqlBuilder.Append("where post_status_id = @StatusId And offer_date_expiration > @CurrentTime");
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("StatusId", statusActiveId);
+                dynamicParameters.Add("CurrentTime", currentTimeEpoch);
 
-                    var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("StatusId", statusActiveId);
-                    dynamicParameters.Add("CurrentTime", currentTimeEpoch);
-
-                    var allPostActivedWithOffer = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
-                    return allPostActivedWithOffer;
-                }
+                var allPostActivedWithOffer = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
+                return allPostActivedWithOffer;
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
         }
 
 
         public async Task<List<PostWithOfferDTO>> SearchPostActive(PostSearchRequest postSearchRequest, int statusActiveId)
         {
-            try
+
+            var sqlBuilder = new StringBuilder(_selectAllPostActive);
+
+            var dynamicParameters = new DynamicParameters();
+
+            if (postSearchRequest.postCategoryId != 0)
             {
-                var sqlBuilder = new StringBuilder(_selectAllPostActive);
-
-                var dynamicParameters = new DynamicParameters();
-
-                if (postSearchRequest.postCategoryId != 0)
-                {
-                    sqlBuilder.Append(" AND post_categoryId = @CategoryId");
-                    dynamicParameters.Add("CategoryId", postSearchRequest.postCategoryId);
-                }
-
-                if (postSearchRequest.postBrandId != 0)
-                {
-                    sqlBuilder.Append(" AND post_brandId = @BrandId");
-                    dynamicParameters.Add("BrandId", postSearchRequest.postBrandId);
-                }
-
-                if (!string.IsNullOrEmpty(postSearchRequest.postName))
-                {
-                    sqlBuilder.Append(" AND post_name LIKE @PostName");
-                    dynamicParameters.Add("PostName", $"%{postSearchRequest.postName}%");
-                }
-                sqlBuilder.Append("where post_status_id = @StatusId");
-                dynamicParameters.Add("StatusId", statusActiveId);
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var listPost = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
-
-                    return listPost;
-                }
+                sqlBuilder.Append(" AND post_categoryId = @CategoryId");
+                dynamicParameters.Add("CategoryId", postSearchRequest.postCategoryId);
             }
-            catch (Exception)
+
+            if (postSearchRequest.postBrandId != 0)
             {
-
-                throw;
+                sqlBuilder.Append(" AND post_brandId = @BrandId");
+                dynamicParameters.Add("BrandId", postSearchRequest.postBrandId);
             }
+
+            if (!string.IsNullOrEmpty(postSearchRequest.postName))
+            {
+                sqlBuilder.Append(" AND post_name LIKE @PostName");
+                dynamicParameters.Add("PostName", $"%{postSearchRequest.postName}%");
+            }
+            sqlBuilder.Append("where post_status_id = @StatusId");
+            dynamicParameters.Add("StatusId", statusActiveId);
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var listPost = (await connection.QueryAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
+
+                return listPost;
+            }
+
+
         }
 
         public async Task<PostWithOfferDTO> DataGetPostByPostId(int postId, int statusActiveId)
         {
-            try
+
+
+            var sqlBuilder = new StringBuilder(_selectAllPostActive);
+            sqlBuilder.Append("AND post_id = @PostId");
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("PostId", postId);
+            sqlBuilder.Append("where post_status_id = @StatusId");
+            dynamicParameters.Add("StatusId", statusActiveId);
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                var sqlBuilder = new StringBuilder(_selectAllPostActive);
-                sqlBuilder.Append("AND post_id = @PostId");
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("PostId", postId);
-                sqlBuilder.Append("where post_status_id = @StatusId");
-                dynamicParameters.Add("StatusId", statusActiveId);
-
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    return await connection.QueryFirstOrDefaultAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters);
-                }
-
+                return await connection.QueryFirstOrDefaultAsync<PostWithOfferDTO>(sqlBuilder.ToString(), dynamicParameters);
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
+
         }
         public async Task<List<PostDTO>> DataAllPostByUserId(int userId)
         {
-            try
+
+            var sqlBuilder = new StringBuilder(_selectAllPostByUserId);
+            sqlBuilder.Append("where post_userId = @UserId");
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("UserId", userId);
+
+
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                var sqlBuilder = new StringBuilder(_selectAllPostByUserId);
-                sqlBuilder.Append("where post_userId = @UserId");
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("UserId", userId);
-
-
-
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    return (await connection.QueryAsync<PostDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
-                }
-
+                return (await connection.QueryAsync<PostDTO>(sqlBuilder.ToString(), dynamicParameters)).ToList();
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
+
         }
 
     }

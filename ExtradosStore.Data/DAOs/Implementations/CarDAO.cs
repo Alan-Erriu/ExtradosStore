@@ -16,6 +16,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
             _SQLServerConfig = bdConfig.Value;
 
         }
+        #region querys
         private string _sqlInsertIntoCar = @"INSERT INTO [car] (user_id, post_id, quantity) VALUES (@UserID, @PostID,@Quantity)";
 
         private string _sqlSelectAllRows = @"SELECT  post_id, quantity FROM [car] WHERE user_id = @UserId";
@@ -27,123 +28,86 @@ namespace ExtradosStore.Data.DAOs.Implementations
         private string _sqlDeleteCarItemByPostAndUserId = @"DELETE FROM [car] WHERE post_id = @PostId AND user_id = @UserId";
 
         private string _sqlDeleteAllItemsFromCarByuserId = @"DELETE FROM [car] WHERE user_id=@UserId";
-
+        #endregion
         public async Task<int> DataDeleteAllItemsFromCar(int userId)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        UserId = userId,
+                    UserId = userId,
 
-                    };
-                    var rowsAffected = await connection.ExecuteAsync(_sqlDeleteAllItemsFromCarByuserId, parameters);
-                    return rowsAffected;
                 };
-            }
-            catch
-            {
+                var rowsAffected = await connection.ExecuteAsync(_sqlDeleteAllItemsFromCarByuserId, parameters);
+                return rowsAffected;
+            };
 
-                throw;
-            }
 
         }
 
 
         public async Task<int> DataAddtoCar(AddToCarRequest addToCarRequest, int userId)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new
-                    {
-                        UserId = userId,
-                        PostId = addToCarRequest.post_id,
-                        Quantity = addToCarRequest.quantity
-                    };
-                    var rowsAffected = await connection.ExecuteAsync(_sqlInsertIntoCar, parameters);
-                    return rowsAffected;
-                };
-            }
-            catch
-            {
 
-                throw;
-            }
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
+                {
+                    UserId = userId,
+                    PostId = addToCarRequest.post_id,
+                    Quantity = addToCarRequest.quantity
+                };
+                var rowsAffected = await connection.ExecuteAsync(_sqlInsertIntoCar, parameters);
+                return rowsAffected;
+            };
+
 
         }
         public async Task<List<CarDTO>> DataGetCarByUserId(int userId)
         {
-            try
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId };
-                    var listCar = (await connection.QueryAsync<CarDTO>(_sqlSelectAllRows, parameters)).ToList();
-                    return listCar;
-                }
-
+                var parameters = new { UserId = userId };
+                var listCar = (await connection.QueryAsync<CarDTO>(_sqlSelectAllRows, parameters)).ToList();
+                return listCar;
             }
-            catch
-            {
 
-                throw;
-            }
+
         }
         public async Task<int> DataGetQuantityByPostAndUserId(int postId, int userId)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId, PostId = postId };
-                    var quantity = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectQuantityByPostAndUserId, parameters);
-                    return quantity;
-                }
 
-            }
-            catch
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-
-                throw;
+                var parameters = new { UserId = userId, PostId = postId };
+                var quantity = await connection.QueryFirstOrDefaultAsync<int>(_sqlSelectQuantityByPostAndUserId, parameters);
+                return quantity;
             }
+
+
         }
         public async Task<int> DataDeleteCarItem(int postId, int userId)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId, PostId = postId };
-                    return await connection.ExecuteAsync(_sqlDeleteCarItemByPostAndUserId, parameters);
 
-                }
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { UserId = userId, PostId = postId };
+                return await connection.ExecuteAsync(_sqlDeleteCarItemByPostAndUserId, parameters);
 
             }
-            catch
-            {
 
-                throw;
-            }
+
         }
         public async Task<int> DataUpdateQuantity(int quantity, int userId)
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { Quantity = quantity, UserId = userId };
-                    return await connection.ExecuteAsync(_sqlUpdateQuantity, parameters);
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { Quantity = quantity, UserId = userId };
+                return await connection.ExecuteAsync(_sqlUpdateQuantity, parameters);
             }
+
         }
     }
 }

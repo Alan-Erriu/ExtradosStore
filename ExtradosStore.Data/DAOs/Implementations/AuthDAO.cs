@@ -13,6 +13,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
     {
         private SQLServerConfig _SQLServerConfig;
 
+        #region querys
         private string _sqlInsertUser = @"INSERT INTO [user] (user_name, user_lastname, user_email,user_password_hash, user_created_at, user_date_of_birth, user_roleid, user_phone_number)
                                          VALUES (@Name, @LastName, @Email,@Password, @CreatedAt, @DateOfbirth, @Roleid, @PhoneNumber)";
 
@@ -23,7 +24,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         private string _sqlSelectAuthUserLogin = @"SELECT user_id,user_name, user_email,user_password_hash, user_date_of_birth, user_roleid,user_status 
                                                    FROM [user] WHERE user_email = @Mail";
-
+        #endregion
         public AuthDAO(IOptions<SQLServerConfig> bdConfig)
         {
             _SQLServerConfig = bdConfig.Value;
@@ -32,99 +33,70 @@ namespace ExtradosStore.Data.DAOs.Implementations
         //iniciar sesion
         public async Task<AuthLoginUserDTO> DataSignIn(LoginUserRequest loginRequest)
         {
-            try
+
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
+                var parameters = new { Mail = loginRequest.user_email };
+                var user = await connection.QueryFirstOrDefaultAsync<AuthLoginUserDTO>(_sqlSelectAuthUserLogin, parameters);
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { Mail = loginRequest.user_email };
-                    var user = await connection.QueryFirstOrDefaultAsync<AuthLoginUserDTO>(_sqlSelectAuthUserLogin, parameters);
-
-                    return user;
-                }
+                return user;
             }
-            catch
-            {
 
-
-                throw;
-
-            }
         }
         // registrarse como usuario, el rol obtenido es "user"
         public async Task<int> DataSignUp(User newUser)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
+                var parameters = new
                 {
+                    Name = newUser.user_name.ToLower(),
+                    LastName = newUser.user_lastname.ToLower(),
+                    Email = newUser.user_email,
+                    Password = newUser.user_password_hash,
+                    DateOfbirth = newUser.user_date_of_birth,
+                    CreatedAt = newUser.user_created_at,
+                    Roleid = newUser.user_roleid,
+                    PhoneNumber = newUser.user_phone_number
+                };
+                var rowsAffected = await connection.ExecuteAsync(_sqlInsertUser, parameters);
 
-                    var parameters = new
-                    {
-                        Name = newUser.user_name.ToLower(),
-                        LastName = newUser.user_lastname.ToLower(),
-                        Email = newUser.user_email,
-                        Password = newUser.user_password_hash,
-                        DateOfbirth = newUser.user_date_of_birth,
-                        CreatedAt = newUser.user_created_at,
-                        Roleid = newUser.user_roleid,
-                        PhoneNumber = newUser.user_phone_number
-                    };
-                    var rowsAffected = await connection.ExecuteAsync(_sqlInsertUser, parameters);
-
-                    return rowsAffected;
-                }
+                return rowsAffected;
             }
-            catch
-            {
-                throw;
-
-            }
-
 
         }
         public async Task<string> DataGetEmailUser(string email)
         {
-            try
+
+
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { Email = email };
-                    var emailFound = await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectEmailUser, parameters);
-                    return emailFound;
-
-                }
+                var parameters = new { Email = email };
+                var emailFound = await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectEmailUser, parameters);
+                return emailFound;
 
             }
-            catch
-            {
 
-                throw;
-            }
 
         }
         public async Task<string> DataGetPhoneNumberUser(string PohoneNumberRequest)
         {
 
-            try
+
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
+                var parameters = new { PhoneNumber = PohoneNumberRequest };
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { PhoneNumber = PohoneNumberRequest };
+                return await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectPhoneNumberUser, parameters);
 
-                    return await connection.QueryFirstOrDefaultAsync<string>(_sqlSelectPhoneNumberUser, parameters);
-
-
-                }
 
             }
-            catch
-            {
 
-                throw;
-            }
         }
     }
 }

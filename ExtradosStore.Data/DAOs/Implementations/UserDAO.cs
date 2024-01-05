@@ -18,7 +18,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
             _SQLServerConfig = bdConfig.Value;
 
         }
-
+        #region querys
         private string _sqlUpdateStatusUser = "UPDATE [user] SET user_status = @StatusUser WHERE user_id = @UserId";
 
         private string _sqlSelectUserById = @"SELECT user_id,user_name,user_lastname, user_email, user_date_of_birth, user_roleid,user_status,user_created_at
@@ -27,23 +27,17 @@ namespace ExtradosStore.Data.DAOs.Implementations
         private string _sqlUpdateRoleFromUserToAdmin = "UPDATE [user] SET user_roleid = @roleId WHERE user_id = @UserId";
 
         private string _sqlSelecAllUser = "SELECT user_id,user_name,user_lastname, user_email, user_date_of_birth, user_roleid,user_status,user_created_at,user_phone_number FROM [user]";
-
+        #endregion
         public async Task<List<User>> DataGetAllUser()
         {
-            try
-            {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var listUser = (await connection.QueryAsync<User>(_sqlSelecAllUser)).ToList();
-                    return listUser;
-                }
 
-            }
-            catch
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
-
-                throw;
+                var listUser = (await connection.QueryAsync<User>(_sqlSelecAllUser)).ToList();
+                return listUser;
             }
+
+
         }
 
 
@@ -52,83 +46,58 @@ namespace ExtradosStore.Data.DAOs.Implementations
         // habilita o deshabilita. StatusUser en 1 para habilitar, statusUser en 0 para deshabilitar
         public async Task<int> DataUpdateStatusUser(int userId, int statusUser)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId, StatusUser = statusUser };
-                    var queryUpdateStatusUser = await connection.ExecuteAsync(_sqlUpdateStatusUser, parameters);
-                    return queryUpdateStatusUser;
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { UserId = userId, StatusUser = statusUser };
+                var queryUpdateStatusUser = await connection.ExecuteAsync(_sqlUpdateStatusUser, parameters);
+                return queryUpdateStatusUser;
             }
+
 
         }
         //actualiza el rol del usario, espera id de usuario y id del rol 
         public async Task<int> DataUpdateRolUser(int userId, int roleId)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId, RoleId = roleId };
-                    var queryUpdateStatusUser = await connection.ExecuteAsync(_sqlUpdateStatusUser, parameters);
-                    return queryUpdateStatusUser;
-                }
-            }
-            catch
-            {
 
-                throw;
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { UserId = userId, RoleId = roleId };
+                var queryUpdateStatusUser = await connection.ExecuteAsync(_sqlUpdateStatusUser, parameters);
+                return queryUpdateStatusUser;
             }
+
 
         }
 
 
         public async Task<User> DataGetUserById(int userId)
         {
-            try
+
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
+                var parameters = new { UserId = userId };
+                var user = await connection.QueryFirstOrDefaultAsync<User>(_sqlSelectUserById, parameters);
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId };
-                    var user = await connection.QueryFirstOrDefaultAsync<User>(_sqlSelectUserById, parameters);
-
-                    return user;
-                }
+                return user;
             }
-            catch
-            {
 
-                throw;
-            }
 
         }
         public async Task<int> DataUpgradeRoleFromUserToAdmin(int userId, int roleId)
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
+                var parameters = new { UserId = userId, RoleId = roleId };
+                var rowsAffected = await connection.ExecuteAsync(_sqlUpdateRoleFromUserToAdmin, parameters);
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
-                {
-                    var parameters = new { UserId = userId, RoleId = roleId };
-                    var rowsAffected = await connection.ExecuteAsync(_sqlUpdateRoleFromUserToAdmin, parameters);
-
-                    return rowsAffected;
-                }
+                return rowsAffected;
             }
-            catch
-            {
 
-                throw;
-            }
 
         }
     }

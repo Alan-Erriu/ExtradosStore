@@ -1,3 +1,4 @@
+using ExtradosStore.API.Middlewares;
 using ExtradosStore.Configuration.DBConfiguration;
 using ExtradosStore.Configuration.JWTConfiguration;
 using ExtradosStore.Data.DAOs.Implementations;
@@ -97,6 +98,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
 app.MapControllers();
 

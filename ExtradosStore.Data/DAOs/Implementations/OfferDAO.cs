@@ -16,7 +16,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
             _SQLServerConfig = bdConfig.Value;
 
         }
-
+        #region querys
         private string _sqlInsertNewOffer = @"INSERT  INTO [offer]( offer_name, offer_date_start,offer_date_expiration, offer_userId) VALUES
                                               (@OfferName, @OfferDateStart, @OfferDateExpiration,@UserId)";
         private string _sqlSelectOfferExpirated = "SELECT offer_id FROM [offer] where offer_date_expiration > @DateTimeNow";
@@ -26,96 +26,68 @@ namespace ExtradosStore.Data.DAOs.Implementations
         private string _sqlSelectAllOfferActive = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration, offer_userId FROM [offer] where offer_date_expiration > @DateNow ";
 
         private string _sqlSelectAllOffer = @"SELECT offer_id,offer_name, offer_date_start,offer_date_expiration,offer_userId FROM [offer]";
+        #endregion
         public async Task<int> DataCreateOffer(CreateOfferRequest offerRequest, int userId)
         {
             DateTimeOffset offerExpirationDate = offerRequest.offer_date_expiration.Date;
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        OfferName = offerRequest.offer_name,
-                        OfferDateStart = new DateTimeOffset(offerRequest.offer_date_start).ToUnixTimeMilliseconds(),
-                        OfferDateExpiration = offerExpirationDate.ToUnixTimeMilliseconds(),
-                        UserId = userId
-                    };
+                    OfferName = offerRequest.offer_name,
+                    OfferDateStart = new DateTimeOffset(offerRequest.offer_date_start).ToUnixTimeMilliseconds(),
+                    OfferDateExpiration = offerExpirationDate.ToUnixTimeMilliseconds(),
+                    UserId = userId
+                };
 
-
-
-
-
-
-                    return await connection.ExecuteAsync(_sqlInsertNewOffer, parameters);
-                }
+                return await connection.ExecuteAsync(_sqlInsertNewOffer, parameters);
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<long> DataGetExpirationDateByOfferId(int offerID)
         {
-            try
-            {
 
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new
                 {
-                    var parameters = new
-                    {
-                        OfferID = offerID
-                    };
-                    var expirationDate = await connection.QueryFirstOrDefaultAsync<long>(_sqlSelectExpirationDateByOfferId, parameters);
-                    return expirationDate;
-                }
+                    OfferID = offerID
+                };
+                var expirationDate = await connection.QueryFirstOrDefaultAsync<long>(_sqlSelectExpirationDateByOfferId, parameters);
+                return expirationDate;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<List<Offer>> GetAllOfferActive()
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new { DateNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
 
-                {
-                    var parameters = new { DateNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
+                var listOffer = (await connection.QueryAsync<Offer>(_sqlSelectAllOfferActive, parameters)).ToList();
 
-                    var listOffer = (await connection.QueryAsync<Offer>(_sqlSelectAllOfferActive, parameters)).ToList();
-
-                    return listOffer;
-                }
+                return listOffer;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<List<Offer>> GetAllOffer()
         {
-            try
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+
             {
-                using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+                var parameters = new { DateNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
 
-                {
-                    var parameters = new { DateNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
+                var listOffer = (await connection.QueryAsync<Offer>(_sqlSelectAllOffer)).ToList();
 
-                    var listOffer = (await connection.QueryAsync<Offer>(_sqlSelectAllOffer)).ToList();
-
-                    return listOffer;
-                }
+                return listOffer;
             }
-            catch
-            {
 
-                throw;
-            }
         }
         public async Task<List<int>> GetOfferExpiratedData()
         {

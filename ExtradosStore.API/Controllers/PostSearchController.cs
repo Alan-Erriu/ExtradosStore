@@ -38,18 +38,11 @@ namespace ExtradosStore.API.Controllers
         [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> GetAllPostActive()
         {
-            try
-            {
 
-                var allPostActiveWithOffer = await _postSearchService.GetAllPostService();
-                return Ok(allPostActiveWithOffer);
+            var allPostActiveWithOffer = await _postSearchService.GetAllPostService();
+            return Ok(allPostActiveWithOffer);
 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error getting all post: {ex.Message} {ex.StackTrace}");
-                return StatusCode(500, "Something went wrong. Please contact support.");
-            }
+
         }
 
         //todas las publicaciones con oferta, con estado "active"
