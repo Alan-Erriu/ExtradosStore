@@ -22,7 +22,7 @@ namespace ExtradosStore.Services.Implementations
             _jWTService = jWTService;
         }
 
-        //registrarse:  devuelve un int que representa las filas afectadas (dapper)
+
         public async Task<int> SignUpService(RegisterUserRequest createUserRequest)
         {
 

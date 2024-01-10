@@ -73,7 +73,7 @@ namespace ExtradosStore.API.Middlewares
                 }
 
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await context.Response.WriteAsJsonAsync("Something went wrong. Please contact support. middleware");
+                await context.Response.WriteAsJsonAsync("Something went wrong. Please contact support.");
 
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace ExtradosStore.API.Middlewares
                 Console.WriteLine(ex.StackTrace);
 
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await context.Response.WriteAsJsonAsync("Something went wrong. Please contact support. middleware");
+                await context.Response.WriteAsJsonAsync("Something went wrong. Please contact support.");
             }
         }
     }

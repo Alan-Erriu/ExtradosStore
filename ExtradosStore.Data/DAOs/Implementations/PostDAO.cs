@@ -269,7 +269,7 @@ JOIN
             using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {
                 var sqlBuilder = new StringBuilder(_selectAllPostActive);
-                sqlBuilder.Append("where post_status_i = @StatusId");
+                sqlBuilder.Append("where post_status_id = @StatusId");
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("StatusId", statusActiveId);
 
@@ -339,10 +339,10 @@ JOIN
 
 
             var sqlBuilder = new StringBuilder(_selectAllPostActive);
-            sqlBuilder.Append("AND post_id = @PostId");
             var dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("PostId", postId);
-            sqlBuilder.Append("where post_status_id = @StatusId");
+            sqlBuilder.Append(" where post_status_id = @StatusId");
+            sqlBuilder.Append(" AND post_id = @PostId");
             dynamicParameters.Add("StatusId", statusActiveId);
 
             using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
