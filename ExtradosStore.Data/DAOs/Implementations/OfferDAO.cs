@@ -37,8 +37,8 @@ namespace ExtradosStore.Data.DAOs.Implementations
                 var parameters = new
                 {
                     OfferName = offerRequest.offer_name,
-                    OfferDateStart = new DateTimeOffset(offerRequest.offer_date_start).ToUnixTimeMilliseconds(),
-                    OfferDateExpiration = offerExpirationDate.ToUnixTimeMilliseconds(),
+                    OfferDateStart = offerRequest.offer_date_start.ToUniversalTime(),
+                    OfferDateExpiration = offerExpirationDate.ToUniversalTime(),
                     UserId = userId
                 };
 

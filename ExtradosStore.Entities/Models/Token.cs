@@ -5,6 +5,6 @@
         public int token_userid { get; set; }
         public string token_accesstoken { get; set; }
         public string token_refreshToken { get; set; }
-        public long token_expiration_date_refreshtoken { get; set; }
+        public DateTime token_expiration_date_refreshtoken { get; set; }
     }
 }

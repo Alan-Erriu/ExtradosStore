@@ -134,7 +134,7 @@ JOIN
                     PostImg = CreateNewPostRequest.post_img,
                     PostCategoryId = CreateNewPostRequest.category_id,
                     PostBrandId = CreateNewPostRequest.brand_id,
-                    CreateAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                    CreateAt = DateTime.UtcNow
                 };
 
                 var rowsAffected = await connection.ExecuteAsync(_sqlInsertNewPost, parameters);
@@ -322,7 +322,7 @@ JOIN
                 sqlBuilder.Append(" AND post_name LIKE @PostName");
                 dynamicParameters.Add("PostName", $"%{postSearchRequest.postName}%");
             }
-            sqlBuilder.Append("where post_status_id = @StatusId");
+            sqlBuilder.Append(" where post_status_id = @StatusId");
             dynamicParameters.Add("StatusId", statusActiveId);
             using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
             {

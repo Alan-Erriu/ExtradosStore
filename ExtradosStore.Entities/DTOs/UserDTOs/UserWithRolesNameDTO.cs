@@ -9,8 +9,8 @@
         public string email { get; set; }
         public string phoneNumber { get; set; }
         public bool status { get; set; }
-        public long createdAt { get; set; }
-        public long dateOfBirth { get; set; }
+        public DateTime createdAt { get; set; }
+        public DateTime dateOfBirth { get; set; }
     }
 }
 

@@ -27,7 +27,7 @@ namespace ExtradosStore.API.Controllers
         }
         //todas las publicaciones con o sin oferta, con estado "active", si tiene oferta aplica el descuento.
         [HttpGet("getall")]
-        [Authorize(Roles = "admin,user")]
+        //[Authorize(Roles = "admin,user")]
         public async Task<IActionResult> GetAllPostActive()
         {
             var allPostActiveWithOffer = await _postSearchService.GetAllPostService();

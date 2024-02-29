@@ -40,7 +40,7 @@ namespace ExtradosStore.Services.Implementations
 
             createUserRequest.user_password_hash = _hasherService.HashPasswordUser(createUserRequest.user_password_hash);
 
-            long dateOfBirthNewUserEpoch = new DateTimeOffset(createUserRequest.user_date_of_birth).ToUnixTimeMilliseconds();
+
 
             var Newuser = new User
             {
@@ -49,8 +49,8 @@ namespace ExtradosStore.Services.Implementations
                 user_email = createUserRequest.user_email,
                 user_password_hash = createUserRequest.user_password_hash,
                 user_roleid = userIdRole,
-                user_created_at = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                user_date_of_birth = dateOfBirthNewUserEpoch,
+                user_created_at = DateTime.UtcNow,
+                user_date_of_birth = createUserRequest.user_date_of_birth.ToUniversalTime(),
                 user_phone_number = createUserRequest.user_phone_number,
             };
             return await _atuthDAO.DataSignUp(Newuser);

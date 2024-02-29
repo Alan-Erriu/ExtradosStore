@@ -100,6 +100,7 @@ namespace ExtradosStore.API.Controllers
 
         public async Task<IActionResult> UpdatePost([FromBody] UpdatePostRequest updatePostRequest)
         {
+
             if (updatePostRequest.postPrice < 0) return BadRequest("Post price must have a valid positive value");
 
             if (updatePostRequest.postStock < 0) return BadRequest("Post stock must have a valid positive value");

@@ -88,7 +88,7 @@ namespace ExtradosStore.Services.Implementations
                 token_userid = id_user,
                 token_accesstoken = token,
                 token_refreshToken = refreshToken,
-                token_expiration_date_refreshtoken = DateTimeOffset.UtcNow.AddDays(4).ToUnixTimeMilliseconds()
+                token_expiration_date_refreshtoken = DateTime.UtcNow.AddDays(1)
             };
             AccesAndRefreshTokenDTO tokenSaved = await _jwtDao.DataInsertRefreshToken(tokenHistory);
             return tokenSaved;
@@ -133,7 +133,8 @@ namespace ExtradosStore.Services.Implementations
             Token refreshTokenBd = await _jwtDao.DataSelectRefreshToken(id_user);
             if (refreshTokenBd.token_accesstoken == null) throw new NotFoundException("token not found in db, refreshTokenBd.expiration_date_tokenhistory will be null");
             long currentEpochTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            if (refreshTokenBd.token_expiration_date_refreshtoken < currentEpochTime) return false;
+            long refreshTokenExpirationMilliseconds = ((DateTimeOffset)refreshTokenBd.token_expiration_date_refreshtoken).ToUnixTimeMilliseconds();
+            if (refreshTokenExpirationMilliseconds < currentEpochTime) return false;
             return true;
         }
 
