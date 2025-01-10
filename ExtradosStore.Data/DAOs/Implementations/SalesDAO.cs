@@ -15,7 +15,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
             _SQLServerConfig = bdConfig.Value;
 
         }
-
+         private string test = "";
         private string _sqlInsertSales = @"INSERT INTO [sales] (user_id, date_sale, total) 
                                        OUTPUT INSERTED.sales_id
                                        VALUES (@UserId, @DateSale, @Total)";
@@ -38,6 +38,19 @@ namespace ExtradosStore.Data.DAOs.Implementations
 
         }
         public async Task<List<SaleDTO>> DataGetAllSalesByUserId(int userId)
+        {
+
+            using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))
+            {
+                var parameters = new { UserId = userId };
+                var AllSales = (await connection.QueryAsync<SaleDTO>(_sqlSelectAllSalesByUserId, parameters)).ToList();
+
+                return AllSales;
+            }
+
+        }
+
+        public async Task<List<SaleDTO>> DataGetAllSalesByUserName(int userId)
         {
 
             using (var connection = new SqlConnection(_SQLServerConfig.ConnectionStrings))

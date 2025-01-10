@@ -44,7 +44,7 @@ namespace ExtradosStore.Data.DAOs.Implementations
             }
 
         }
-        // registrarse como usuario, el rol obtenido es "user"
+
         public async Task<int> DataSignUp(User newUser)
         {
 
